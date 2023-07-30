@@ -58,6 +58,7 @@ use crate::Result;
 bitflags::bitflags! {
     /// Values that can be used in the flags parameter to most code signing
     /// functions.
+    #[derive(Debug, Clone)]
     pub struct Flags: u32 {
         /// Use the default behaviour.
         const NONE = 0;

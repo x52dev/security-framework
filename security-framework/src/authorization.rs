@@ -60,6 +60,7 @@ macro_rules! cstring_or_err {
 
 bitflags::bitflags! {
     /// The flags used to specify authorization options.
+    #[derive(Debug, Clone)]
     pub struct Flags: sys::AuthorizationFlags {
         /// An empty flag set that you use as a placeholder when you don't want
         /// any of the other flags.

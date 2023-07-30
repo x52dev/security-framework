@@ -34,6 +34,7 @@ impl fmt::Debug for SecPolicy {
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
 bitflags::bitflags! {
     /// The flags used to specify revocation policy options.
+    #[derive(Debug, Clone)]
     pub struct RevocationPolicy: CFOptionFlags {
         /// Perform revocation checking using OCSP (Online Certificate Status Protocol).
         const OCSP_METHOD = kSecRevocationOCSPMethod;
