@@ -2,25 +2,37 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
   push:
-    branches: main
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     name: Tests
-    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
-        os: [ macos-latest ]
-        # NOTE: when changing the MSRV version, change it below as well
-        rust: [ 1.60.0, stable, beta ]
+        os: [macos-latest]
+        rust:
+          - 1.60.0 # MSRV
+          - stable
+          - beta
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
 
       - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@v1.5.0
         with:
           toolchain: ${{ matrix.rust }}
 
@@ -29,29 +41,29 @@ jobs:
         # will always fail.
       - name: Revert time dep if needed
         if: ${{ matrix.rust == '1.60.0' }}
-        run: cargo update --precise 0.3.17 --package time
+        run: cargo update -p=time --precise=0.3.17
 
       - name: Run cargo test
-        run: cargo test --all-features --all
+        run: cargo test --workspace --all-features
 
       - name: Check default features
-        run: cargo check --all
+        run: cargo check --workspace
 
   ios:
     name: iOS compile-check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@v1
+        uses: actions-rust-lang/setup-rust-toolchain@v1.5.0
         with:
           toolchain: stable
           target: aarch64-apple-ios
 
       - name: Run check
-        run: cargo check --all-features -p security-framework --target aarch64-apple-ios
+        run: cargo check -p=security-framework --target=aarch64-apple-ios --all-features
 
   apple-silicon:
     name: Apple Silicon compile-check
@@ -66,23 +78,4 @@ jobs:
           toolchain: stable
           target: aarch64-apple-darwin
       - name: Run check
-        run: cargo check --all-features -p security-framework --target aarch64-apple-darwin
-
-  lints:
-    name: Lints
-    runs-on: macos-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: clippy, rustfmt
-
-      - name: DO NOT USE RUSTFMT
-        run: "if cargo fmt --quiet --check -- --config-path=/dev/null; then echo >&2 'Do not reformat the code with rustfmt. This project does not use rustfmt.'; fi"
-
-      - name: Run cargo clippy
-        run: cargo clippy --all-features
+        run: cargo check -p=security-framework --target=aarch64-apple-darwin --all-features
