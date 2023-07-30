@@ -15,18 +15,17 @@ concurrency:
 
 jobs:
   test:
-    name: Tests
+    name: Test
 
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
         rust:
           - 1.60.0 # MSRV
           - stable
           - beta
 
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-latest
 
     steps:
       - name: Checkout sources
@@ -40,6 +39,7 @@ jobs:
       - name: MSRV workarounds
         if: ${{ matrix.rust == '1.60.0' }}
         run: |
+          cargo generate-lockfile
           cargo update -p=time --precise=0.3.17
           cargo update -p=is-terminal --precise=0.4.7
           cargo update -p=dashmap --precise=5.4.0
