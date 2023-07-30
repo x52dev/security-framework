@@ -1,9 +1,10 @@
 [package]
 name = "systest"
 version = "0.1.0"
-authors = ["Steven Fackler <sfackler@palantir.com>"]
-edition = "2018"
 publish = false
+authors = ["Steven Fackler <sfackler@palantir.com>"]
+edition = "2021"
+rust-version = "1.60"
 
 [dependencies]
 core-foundation-sys = "0.8.3"

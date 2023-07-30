@@ -37,12 +37,11 @@ jobs:
         with:
           toolchain: ${{ matrix.rust }}
 
-        # `x509_parser` dev-dependency has transitive dependency `time` which
-        # has a 6-month MSRV policy, don't run tests on MSRV version since they
-        # will always fail.
-      - name: Revert time dep if needed
+      - name: MSRV workarounds
         if: ${{ matrix.rust == '1.60.0' }}
-        run: cargo update -p=time --precise=0.3.17
+        run: |
+          cargo update -p=time --precise=0.3.17
+          cargo update -p=is-terminal --precise=0.4.7
 
       - name: Run cargo test
         run: cargo test --workspace --all-features
