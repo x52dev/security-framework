@@ -43,6 +43,7 @@ jobs:
           cargo update -p=time --precise=0.3.17
           cargo update -p=is-terminal --precise=0.4.7
           cargo update -p=dashmap --precise=5.4.0
+          cargo update -p=tempfile --precise=3.6.0
 
       - name: Run cargo test
         run: cargo test --workspace --all-features
@@ -51,7 +52,7 @@ jobs:
         run: cargo check --workspace
 
   ios:
-    name: iOS compile-check
+    name: Check iOS
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -66,7 +67,7 @@ jobs:
         run: cargo check -p=security-framework --target=aarch64-apple-ios --all-features
 
   apple-silicon:
-    name: Apple Silicon compile-check
+    name: Check Apple Silicon
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
