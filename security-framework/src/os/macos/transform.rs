@@ -2,11 +2,10 @@
 
 use std::ptr;
 
-use core_foundation::{
-    base::{CFType, TCFType},
-    error::CFError,
-    string::CFString,
-};
+use core_foundation::base::CFType;
+use core_foundation::base::TCFType;
+use core_foundation::error::CFError;
+use core_foundation::string::CFString;
 use security_framework_sys::transform::*;
 
 declare_TCFType! {

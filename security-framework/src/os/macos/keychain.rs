@@ -1,24 +1,22 @@
 //! Keychain support.
 
-use std::{
-    ffi::CString,
-    os::{raw::c_void, unix::ffi::OsStrExt},
-    path::Path,
-    ptr,
-};
+use std::ffi::CString;
+use std::os::raw::c_void;
+use std::os::unix::ffi::OsStrExt;
+use std::path::Path;
+use std::ptr;
 
-use core_foundation::base::{Boolean, TCFType};
+use core_foundation::base::Boolean;
+use core_foundation::base::TCFType;
+use security_framework_sys::base::errSecSuccess;
+use security_framework_sys::base::SecKeychainRef;
 pub use security_framework_sys::keychain::SecPreferencesDomain;
-use security_framework_sys::{
-    base::{errSecSuccess, SecKeychainRef},
-    keychain::*,
-};
+use security_framework_sys::keychain::*;
 
-use crate::{
-    base::{Error, Result},
-    cvt,
-    os::macos::access::SecAccess,
-};
+use crate::base::Error;
+use crate::base::Result;
+use crate::cvt;
+use crate::os::macos::access::SecAccess;
 
 declare_TCFType! {
     /// A type representing a keychain.
@@ -32,6 +30,7 @@ unsafe impl Send for SecKeychain {}
 impl SecKeychain {
     /// Creates a `SecKeychain` object corresponding to the user's default
     /// keychain.
+    #[allow(clippy::should_implement_trait)]
     #[inline]
     pub fn default() -> Result<Self> {
         unsafe {

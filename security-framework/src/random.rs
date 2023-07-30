@@ -2,7 +2,9 @@
 
 use std::io;
 
-use security_framework_sys::random::{kSecRandomDefault, SecRandomCopyBytes, SecRandomRef};
+use security_framework_sys::random::kSecRandomDefault;
+use security_framework_sys::random::SecRandomCopyBytes;
+use security_framework_sys::random::SecRandomRef;
 
 /// A source of random data.
 pub struct SecRandom(SecRandomRef);

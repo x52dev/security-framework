@@ -1,4 +1,5 @@
-use std::os::raw::{c_int, c_void};
+use std::os::raw::c_int;
+use std::os::raw::c_void;
 
 pub enum __SecRandom {}
 pub type SecRandomRef = *const __SecRandom;

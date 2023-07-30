@@ -10,14 +10,18 @@
 //! threads in the same process simultaneously can produce interference.
 //! So all the query tests have been conditioned to run serially.
 
-use core_foundation::{base::TCFType, string::CFString};
+use core_foundation::base::TCFType;
+use core_foundation::string::CFString;
+use security_framework::item::ItemClass;
+use security_framework::item::ItemSearchOptions;
+use security_framework::item::Limit;
+use security_framework::item::SearchResult;
 #[cfg(target_os = "macos")]
 use security_framework::os::macos::keychain::SecKeychain;
-use security_framework::{
-    item::{ItemClass, ItemSearchOptions, Limit, SearchResult},
-    passwords::{delete_generic_password, set_generic_password},
-};
-use security_framework_sys::item::{kSecAttrAccount, kSecAttrService};
+use security_framework::passwords::delete_generic_password;
+use security_framework::passwords::set_generic_password;
+use security_framework_sys::item::kSecAttrAccount;
+use security_framework_sys::item::kSecAttrService;
 use serial_test::serial;
 
 #[test]
@@ -164,7 +168,9 @@ fn find_leftover_test_generic_passwords() {
 fn generate_random_string() -> String {
     // from the Rust Cookbook:
     // https://rust-lang-nursery.github.io/rust-cookbook/algorithms/randomness.html
-    use rand::{distributions::Alphanumeric, thread_rng, Rng};
+    use rand::distributions::Alphanumeric;
+    use rand::thread_rng;
+    use rand::Rng;
     thread_rng()
         .sample_iter(&Alphanumeric)
         .take(30)

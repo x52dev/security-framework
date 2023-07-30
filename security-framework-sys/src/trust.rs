@@ -1,12 +1,15 @@
+use core_foundation_sys::array::CFArrayRef;
+use core_foundation_sys::base::Boolean;
+use core_foundation_sys::base::CFIndex;
+use core_foundation_sys::base::CFTypeID;
+use core_foundation_sys::base::CFTypeRef;
+use core_foundation_sys::base::OSStatus;
+use core_foundation_sys::date::CFDateRef;
 #[cfg(any(feature = "OSX_10_13", target_os = "ios"))]
 use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::{
-    array::CFArrayRef,
-    base::{Boolean, CFIndex, CFTypeID, CFTypeRef, OSStatus},
-    date::CFDateRef,
-};
 
-use crate::base::{SecCertificateRef, SecKeyRef};
+use crate::base::SecCertificateRef;
+use crate::base::SecKeyRef;
 
 pub type SecTrustResultType = u32;
 

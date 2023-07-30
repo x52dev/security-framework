@@ -9,7 +9,8 @@ extern crate core_foundation;
 use core_foundation_sys::base::OSStatus;
 use security_framework_sys::base::errSecSuccess;
 
-use crate::base::{Error, Result};
+use crate::base::Error;
+use crate::base::Result;
 #[cfg(target_os = "macos")]
 use crate::os::macos::access::SecAccess;
 #[cfg(target_os = "macos")]
@@ -18,10 +19,7 @@ use crate::os::macos::keychain::SecKeychain;
 #[cfg(test)]
 macro_rules! p {
     ($e:expr) => {
-        match $e {
-            Ok(s) => s,
-            Err(e) => panic!("{:?}", e),
-        }
+        $e.unwrap()
     };
 }
 

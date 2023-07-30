@@ -1,19 +1,25 @@
 //! Support for password options, to be used with the passwords module
 
-use core_foundation::{
-    base::{CFOptionFlags, CFType, TCFType},
-    number::CFNumber,
-    string::CFString,
-};
-use security_framework_sys::{
-    access_control::*,
-    item::{
-        kSecAttrAccessControl, kSecAttrAccount, kSecAttrAuthenticationType, kSecAttrPath,
-        kSecAttrPort, kSecAttrProtocol, kSecAttrSecurityDomain, kSecAttrServer, kSecAttrService,
-        kSecClass, kSecClassGenericPassword, kSecClassInternetPassword,
-    },
-    keychain::{SecAuthenticationType, SecProtocolType},
-};
+use core_foundation::base::CFOptionFlags;
+use core_foundation::base::CFType;
+use core_foundation::base::TCFType;
+use core_foundation::number::CFNumber;
+use core_foundation::string::CFString;
+use security_framework_sys::access_control::*;
+use security_framework_sys::item::kSecAttrAccessControl;
+use security_framework_sys::item::kSecAttrAccount;
+use security_framework_sys::item::kSecAttrAuthenticationType;
+use security_framework_sys::item::kSecAttrPath;
+use security_framework_sys::item::kSecAttrPort;
+use security_framework_sys::item::kSecAttrProtocol;
+use security_framework_sys::item::kSecAttrSecurityDomain;
+use security_framework_sys::item::kSecAttrServer;
+use security_framework_sys::item::kSecAttrService;
+use security_framework_sys::item::kSecClass;
+use security_framework_sys::item::kSecClassGenericPassword;
+use security_framework_sys::item::kSecClassInternetPassword;
+use security_framework_sys::keychain::SecAuthenticationType;
+use security_framework_sys::keychain::SecProtocolType;
 
 use crate::access_control::SecAccessControl;
 

@@ -1,13 +1,16 @@
-use std::os::raw::{c_char, c_int, c_void};
+use std::os::raw::c_char;
+use std::os::raw::c_int;
+use std::os::raw::c_void;
 
+use core_foundation_sys::array::CFArrayRef;
+use core_foundation_sys::base::Boolean;
+use core_foundation_sys::base::CFAllocatorRef;
 #[cfg(target_os = "macos")]
 use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::{
-    array::CFArrayRef,
-    base::{Boolean, CFAllocatorRef, OSStatus},
-};
+use core_foundation_sys::base::OSStatus;
 
-use crate::{cipher_suite::SSLCipherSuite, trust::SecTrustRef};
+use crate::cipher_suite::SSLCipherSuite;
+use crate::trust::SecTrustRef;
 
 pub enum SSLContext {}
 pub type SSLContextRef = *mut SSLContext;

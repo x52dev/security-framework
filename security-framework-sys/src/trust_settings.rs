@@ -1,7 +1,6 @@
-use core_foundation_sys::{
-    array::CFArrayRef,
-    base::{CFTypeRef, OSStatus},
-};
+use core_foundation_sys::array::CFArrayRef;
+use core_foundation_sys::base::CFTypeRef;
+use core_foundation_sys::base::OSStatus;
 
 use crate::base::SecCertificateRef;
 

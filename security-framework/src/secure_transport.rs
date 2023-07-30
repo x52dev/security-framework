@@ -72,40 +72,54 @@
 //! }
 //!
 //! ```
-use std::{
-    any::Any,
-    cmp, fmt, io,
-    io::prelude::*,
-    marker::PhantomData,
-    os::raw::c_void,
-    panic::{self, AssertUnwindSafe},
-    ptr, result, slice,
-};
+use std::any::Any;
+use std::cmp;
+use std::fmt;
+use std::io::prelude::*;
+use std::io::{self};
+use std::marker::PhantomData;
+use std::os::raw::c_void;
+use std::panic::AssertUnwindSafe;
+use std::panic::{self};
+use std::ptr;
+use std::result;
+use std::slice;
 
 #[allow(unused_imports)]
-use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{Boolean, TCFType};
+use core_foundation::array::CFArray;
+#[allow(unused_imports)]
+use core_foundation::array::CFArrayRef;
+use core_foundation::base::Boolean;
+use core_foundation::base::TCFType;
 #[cfg(feature = "alpn")]
 use core_foundation::string::CFString;
-use core_foundation_sys::base::{kCFAllocatorDefault, OSStatus};
+use core_foundation_sys::base::kCFAllocatorDefault;
+use core_foundation_sys::base::OSStatus;
 #[allow(unused_imports)]
-use security_framework_sys::base::{
-    errSecBadReq, errSecIO, errSecNotTrusted, errSecSuccess, errSecTrustSettingDeny,
-    errSecUnimplemented,
-};
-use security_framework_sys::{base::errSecParam, secure_transport::*};
+use security_framework_sys::base::errSecBadReq;
+#[allow(unused_imports)]
+use security_framework_sys::base::errSecIO;
+#[allow(unused_imports)]
+use security_framework_sys::base::errSecNotTrusted;
+use security_framework_sys::base::errSecParam;
+#[allow(unused_imports)]
+use security_framework_sys::base::errSecSuccess;
+#[allow(unused_imports)]
+use security_framework_sys::base::errSecTrustSettingDeny;
+#[allow(unused_imports)]
+use security_framework_sys::base::errSecUnimplemented;
+use security_framework_sys::secure_transport::*;
 
-use crate::{
-    base::{Error, Result},
-    certificate::SecCertificate,
-    cipher_suite::CipherSuite,
-    cvt,
-    identity::SecIdentity,
-    import_export::Pkcs12ImportOptions,
-    policy::SecPolicy,
-    trust::SecTrust,
-    AsInner,
-};
+use crate::base::Error;
+use crate::base::Result;
+use crate::certificate::SecCertificate;
+use crate::cipher_suite::CipherSuite;
+use crate::cvt;
+use crate::identity::SecIdentity;
+use crate::import_export::Pkcs12ImportOptions;
+use crate::policy::SecPolicy;
+use crate::trust::SecTrust;
+use crate::AsInner;
 
 /// Specifies a side of a TLS session.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -898,7 +912,7 @@ struct Connection<S> {
     panic: Option<Box<dyn Any + Send>>,
 }
 
-// the logic here is based off of libcurl's
+// the logic here is based off libcurl's
 #[cold]
 fn translate_err(e: &io::Error) -> OSStatus {
     match e.kind() {
@@ -1130,12 +1144,12 @@ impl<S: Read + Write> Read for SslStream<S> {
         };
 
         unsafe {
-            let mut nread = 0;
-            let ret = SSLRead(self.ctx.0, buf.as_mut_ptr().cast(), to_read, &mut nread);
+            let mut n_read = 0;
+            let ret = SSLRead(self.ctx.0, buf.as_mut_ptr().cast(), to_read, &mut n_read);
             // SSLRead can return an error at the same time it returns the last
             // chunk of data (!)
-            if nread > 0 {
-                return Ok(nread);
+            if n_read > 0 {
+                return Ok(n_read);
             }
 
             match ret {
@@ -1155,12 +1169,12 @@ impl<S: Read + Write> Write for SslStream<S> {
             return Ok(0);
         }
         unsafe {
-            let mut nwritten = 0;
-            let ret = SSLWrite(self.ctx.0, buf.as_ptr().cast(), buf.len(), &mut nwritten);
-            // just to be safe, base success off of nwritten rather than ret
+            let mut n_written = 0;
+            let ret = SSLWrite(self.ctx.0, buf.as_ptr().cast(), buf.len(), &mut n_written);
+            // just to be safe, base success off of n_written rather than ret
             // for the same reason as in read
-            if nwritten > 0 {
-                Ok(nwritten)
+            if n_written > 0 {
+                Ok(n_written)
             } else {
                 Err(self.get_error(ret))
             }
@@ -1256,8 +1270,8 @@ impl ClientBuilder {
     /// trusted for use. This includes expired certificates. This introduces
     /// significant vulnerabilities, and should only be used as a last resort.
     #[inline(always)]
-    pub fn danger_accept_invalid_certs(&mut self, noverify: bool) -> &mut Self {
-        self.danger_accept_invalid_certs = noverify;
+    pub fn danger_accept_invalid_certs(&mut self, no_verify: bool) -> &mut Self {
+        self.danger_accept_invalid_certs = no_verify;
         self
     }
 
@@ -1456,9 +1470,9 @@ impl ServerBuilder {
             .passphrase(passphrase)
             .import(pkcs12_der)?
             .into_iter()
-            .filter_map(|idendity| {
-                let certs = idendity.cert_chain.unwrap_or_default();
-                idendity.identity.map(|identity| (identity, certs))
+            .filter_map(|identity| {
+                let certs = identity.cert_chain.unwrap_or_default();
+                identity.identity.map(|identity| (identity, certs))
             })
             .collect();
         if identities.len() == 1 {
@@ -1492,7 +1506,9 @@ impl ServerBuilder {
 
 #[cfg(test)]
 mod test {
-    use std::{io, io::prelude::*, net::TcpStream};
+    use std::io;
+    use std::io::prelude::*;
+    use std::net::TcpStream;
 
     use super::*;
 
@@ -1521,9 +1537,8 @@ mod test {
         ));
         p!(ctx.set_peer_domain_name("foobar.com"));
         let stream = p!(TcpStream::connect("google.com:443"));
-        match ctx.handshake(stream) {
-            Ok(_) => panic!("expected failure"),
-            Err(_) => {}
+        if ctx.handshake(stream).is_ok() {
+            panic!("expected failure")
         }
     }
 
@@ -1610,7 +1625,7 @@ mod test {
             SslConnectionType::STREAM
         ));
         p!(ctx.set_peer_domain_name("google.com"));
-        p!(ctx.set_alpn_protocols(&vec!["h2"]));
+        p!(ctx.set_alpn_protocols(&["h2"]));
         let stream = p!(TcpStream::connect("google.com:443"));
         let stream = ctx.handshake(stream).unwrap();
         assert_eq!(vec!["h2"], stream.context().alpn_protocols().unwrap());
@@ -1624,7 +1639,7 @@ mod test {
             SslConnectionType::STREAM
         ));
         p!(ctx.set_peer_domain_name("google.com"));
-        p!(ctx.set_alpn_protocols(&vec!["h2c"]));
+        p!(ctx.set_alpn_protocols(&["h2c"]));
         let stream = p!(TcpStream::connect("google.com:443"));
         let stream = ctx.handshake(stream).unwrap();
         assert!(stream.context().alpn_protocols().is_err());

@@ -1,11 +1,11 @@
-use std::os::raw::{c_char, c_void};
+use std::os::raw::c_char;
+use std::os::raw::c_void;
 
-use core_foundation_sys::{
-    base::{CFTypeRef, OSStatus},
-    bundle::CFBundleRef,
-    dictionary::CFDictionaryRef,
-    string::CFStringRef,
-};
+use core_foundation_sys::base::CFTypeRef;
+use core_foundation_sys::base::OSStatus;
+use core_foundation_sys::bundle::CFBundleRef;
+use core_foundation_sys::dictionary::CFDictionaryRef;
+use core_foundation_sys::string::CFStringRef;
 
 pub const errAuthorizationSuccess: OSStatus = 0;
 pub const errAuthorizationInvalidSet: OSStatus = -60001;

@@ -2,24 +2,22 @@
 
 use std::ptr;
 
-use core_foundation::{
-    array::{CFArray, CFArrayRef},
-    base::{CFIndex, TCFType},
-    dictionary::CFDictionary,
-    number::CFNumber,
-    string::CFString,
-};
+use core_foundation::array::CFArray;
+use core_foundation::array::CFArrayRef;
+use core_foundation::base::CFIndex;
+use core_foundation::base::TCFType;
+use core_foundation::dictionary::CFDictionary;
+use core_foundation::number::CFNumber;
+use core_foundation::string::CFString;
 use core_foundation_sys::base::CFTypeRef;
-use security_framework_sys::{
-    base::{errSecNoTrustSettings, errSecSuccess},
-    trust_settings::*,
-};
+use security_framework_sys::base::errSecNoTrustSettings;
+use security_framework_sys::base::errSecSuccess;
+use security_framework_sys::trust_settings::*;
 
-use crate::{
-    base::{Error, Result},
-    certificate::SecCertificate,
-    cvt,
-};
+use crate::base::Error;
+use crate::base::Result;
+use crate::certificate::SecCertificate;
+use crate::cvt;
 
 /// Which set of trust settings to query
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]

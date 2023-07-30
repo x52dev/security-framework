@@ -1,6 +1,9 @@
 //! Support types for other modules.
 
-use std::{error, fmt, num::NonZeroI32, result};
+use std::error;
+use std::fmt;
+use std::num::NonZeroI32;
+use std::result;
 
 use core_foundation::string::CFString;
 use core_foundation_sys::base::OSStatus;

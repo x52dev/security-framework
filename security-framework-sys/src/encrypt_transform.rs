@@ -1,6 +1,8 @@
-use core_foundation_sys::{error::CFErrorRef, string::CFStringRef};
+use core_foundation_sys::error::CFErrorRef;
+use core_foundation_sys::string::CFStringRef;
 
-use crate::{base::SecKeyRef, transform::SecTransformRef};
+use crate::base::SecKeyRef;
+use crate::transform::SecTransformRef;
 
 extern "C" {
     pub static kSecEncryptionMode: CFStringRef;

@@ -29,4 +29,4 @@ OSX_10_15 = ["OSX_10_14"]
 targets = ["x86_64-apple-darwin", "aarch64-apple-ios"]
 
 [badges]
-maintenance = { status = "looking-for-maintainer" }
+maintenance = { status = "passive-maintainance" }

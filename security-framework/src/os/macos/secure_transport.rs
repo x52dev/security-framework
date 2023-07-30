@@ -1,17 +1,18 @@
 //! OSX specific extensions to Secure Transport functionality.
 
-use std::{ptr, slice};
+use std::ptr;
+use std::slice;
 
-use core_foundation::{array::CFArray, base::TCFType};
+use core_foundation::array::CFArray;
+use core_foundation::base::TCFType;
 use security_framework_sys::secure_transport::*;
 
-use crate::{
-    base::Result,
-    certificate::SecCertificate,
-    cvt,
-    secure_transport::{MidHandshakeSslStream, SslContext},
-    AsInner,
-};
+use crate::base::Result;
+use crate::certificate::SecCertificate;
+use crate::cvt;
+use crate::secure_transport::MidHandshakeSslStream;
+use crate::secure_transport::SslContext;
+use crate::AsInner;
 
 /// An extension trait adding OSX specific functionality to the `SslContext`
 /// type.
@@ -213,19 +214,18 @@ impl<S> MidHandshakeSslStreamExt for MidHandshakeSslStream<S> {
 
 #[cfg(test)]
 mod test {
-    use std::{
-        io::prelude::*,
-        net::{TcpListener, TcpStream},
-        thread,
-    };
+    use std::io::prelude::*;
+    use std::net::TcpListener;
+    use std::net::TcpStream;
+    use std::thread;
 
     use tempfile::tempdir;
 
     use super::*;
-    use crate::{
-        cipher_suite::CipherSuite, os::macos::test::identity, secure_transport::*,
-        test::certificate,
-    };
+    use crate::cipher_suite::CipherSuite;
+    use crate::os::macos::test::identity;
+    use crate::secure_transport::*;
+    use crate::test::certificate;
 
     #[test]
     fn server_client() {
@@ -246,7 +246,7 @@ mod test {
             let mut stream = p!(ctx.handshake(stream));
 
             let mut buf = [0; 12];
-            p!(stream.read(&mut buf));
+            p!(stream.read_exact(&mut buf));
             assert_eq!(&buf[..], b"hello world!");
         });
 
@@ -290,7 +290,7 @@ mod test {
             let mut stream = p!(builder.handshake(stream));
 
             let mut buf = [0; 12];
-            p!(stream.read(&mut buf));
+            p!(stream.read_exact(&mut buf));
             assert_eq!(&buf[..], b"hello world!");
         });
 
@@ -353,7 +353,7 @@ mod test {
             let mut stream = p!(ctx.handshake(stream));
 
             let mut buf = [0; 12];
-            p!(stream.read(&mut buf));
+            p!(stream.read_exact(&mut buf));
             assert_eq!(&buf[..], b"hello world!");
         });
 
@@ -392,7 +392,7 @@ mod test {
                 p!(stream.context().negotiated_cipher())
             );
             let mut buf = [0; 1];
-            p!(stream.read(&mut buf));
+            p!(stream.read_exact(&mut buf));
         });
 
         let mut ctx = p!(SslContext::new(
@@ -417,7 +417,7 @@ mod test {
             CipherSuite::TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,
             p!(stream.context().negotiated_cipher())
         );
-        p!(stream.write(&[0]));
+        p!(stream.write_all(&[0]));
 
         handle.join().unwrap();
     }
@@ -456,7 +456,7 @@ mod test {
             let stream = p!(listener.accept()).0;
             let mut stream = p!(ctx.handshake(stream));
             let mut buf = [0; 1];
-            p!(stream.read(&mut buf));
+            p!(stream.read_exact(&mut buf));
         });
 
         let mut ctx = p!(SslContext::new(
@@ -473,7 +473,7 @@ mod test {
         };
 
         let mut stream = p!(stream.handshake());
-        p!(stream.write(&[0]));
+        p!(stream.write_all(&[0]));
 
         handle.join().unwrap();
     }

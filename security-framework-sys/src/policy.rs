@@ -1,9 +1,8 @@
+use core_foundation_sys::base::Boolean;
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
 use core_foundation_sys::base::CFOptionFlags;
-use core_foundation_sys::{
-    base::{Boolean, CFTypeID},
-    string::CFStringRef,
-};
+use core_foundation_sys::base::CFTypeID;
+use core_foundation_sys::string::CFStringRef;
 
 use crate::base::SecPolicyRef;
 

@@ -1,8 +1,11 @@
+use core_foundation_sys::base::CFTypeID;
 #[cfg(target_os = "macos")]
 use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::base::{CFTypeID, OSStatus};
+use core_foundation_sys::base::OSStatus;
 
-use crate::base::{SecCertificateRef, SecIdentityRef, SecKeyRef};
+use crate::base::SecCertificateRef;
+use crate::base::SecIdentityRef;
+use crate::base::SecKeyRef;
 
 extern "C" {
     pub fn SecIdentityGetTypeID() -> CFTypeID;

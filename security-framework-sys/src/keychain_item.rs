@@ -1,11 +1,12 @@
 use std::os::raw::c_void;
 
-use core_foundation_sys::{
-    base::{CFTypeID, CFTypeRef, OSStatus},
-    dictionary::CFDictionaryRef,
-};
+use core_foundation_sys::base::CFTypeID;
+use core_foundation_sys::base::CFTypeRef;
+use core_foundation_sys::base::OSStatus;
+use core_foundation_sys::dictionary::CFDictionaryRef;
 
-use crate::base::{SecKeychainAttributeList, SecKeychainItemRef};
+use crate::base::SecKeychainAttributeList;
+use crate::base::SecKeychainItemRef;
 
 extern "C" {
 

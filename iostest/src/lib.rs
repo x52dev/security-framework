@@ -9,14 +9,15 @@
 //! XCode project (part of this crate) for how it gets
 //! linked and used for testing.
 
-use security_framework::passwords::{
-    delete_generic_password, delete_internet_password, get_generic_password, get_internet_password,
-    set_generic_password, set_internet_password,
-};
-use security_framework_sys::{
-    base::errSecItemNotFound,
-    keychain::{SecAuthenticationType::Any, SecProtocolType::HTTP},
-};
+use security_framework::passwords::delete_generic_password;
+use security_framework::passwords::delete_internet_password;
+use security_framework::passwords::get_generic_password;
+use security_framework::passwords::get_internet_password;
+use security_framework::passwords::set_generic_password;
+use security_framework::passwords::set_internet_password;
+use security_framework_sys::base::errSecItemNotFound;
+use security_framework_sys::keychain::SecAuthenticationType::Any;
+use security_framework_sys::keychain::SecProtocolType::HTTP;
 
 #[no_mangle]
 extern "C" fn test() {

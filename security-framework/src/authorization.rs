@@ -1,28 +1,32 @@
 //! Authorization Services support.
 
-use std::{
-    convert::{TryFrom, TryInto},
-    ffi::{CStr, CString},
-    fs::File,
-    marker::PhantomData,
-    mem::MaybeUninit,
-    os::raw::c_void,
-    ptr::addr_of,
-};
+#![allow(clippy::bad_bit_mask)] // false positive on bitflags
+
+use std::convert::TryFrom;
+use std::convert::TryInto;
+use std::ffi::CStr;
+use std::ffi::CString;
+use std::fs::File;
+use std::marker::PhantomData;
+use std::mem::MaybeUninit;
+use std::os::raw::c_void;
+use std::ptr::addr_of;
 
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
 use core_foundation::base::Boolean;
+use core_foundation::base::CFTypeRef;
+use core_foundation::base::TCFType;
+use core_foundation::bundle::CFBundleRef;
+use core_foundation::dictionary::CFDictionary;
+use core_foundation::dictionary::CFDictionaryRef;
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
 use core_foundation::error::CFError;
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
 use core_foundation::error::CFErrorRef;
-use core_foundation::{
-    base::{CFTypeRef, TCFType},
-    bundle::CFBundleRef,
-    dictionary::{CFDictionary, CFDictionaryRef},
-    string::{CFString, CFStringRef},
-};
-use security_framework_sys::{authorization as sys, base::errSecConversionError};
+use core_foundation::string::CFString;
+use core_foundation::string::CFStringRef;
+use security_framework_sys::authorization as sys;
+use security_framework_sys::base::errSecConversionError;
 use sys::AuthorizationExternalForm;
 
 /// # Potential improvements
@@ -31,7 +35,14 @@ use sys::AuthorizationExternalForm;
 ///   arguments.
 /// * `AuthorizationCopyRightsAsync`
 /// * Provide constants for well known item names
-use crate::base::{Error, Result};
+use crate::base::Error;
+/// # Potential improvements
+///
+/// * When generic specialization stabilizes prevent copying from `CString`
+///   arguments.
+/// * `AuthorizationCopyRightsAsync`
+/// * Provide constants for well known item names
+use crate::base::Result;
 
 macro_rules! optional_str_to_cfref {
     ($string:ident) => {{
@@ -88,7 +99,7 @@ pub struct AuthorizationItem(sys::AuthorizationItem);
 impl AuthorizationItem {
     /// The required name of the authorization right or environment data.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     #[must_use]
     pub fn name(&self) -> &str {
@@ -185,7 +196,7 @@ impl AuthorizationItemSetBuilder {
     /// Adds an `AuthorizationItem` with the name set to a right and an empty
     /// value.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn add_right<N: Into<Vec<u8>>>(mut self, name: N) -> Result<Self> {
         self.storage.names.push(cstring_or_err!(name)?);
@@ -195,7 +206,7 @@ impl AuthorizationItemSetBuilder {
 
     /// Adds an `AuthorizationItem` with arbitrary data.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn add_data<N, V>(mut self, name: N, value: V) -> Result<Self>
     where
@@ -209,7 +220,7 @@ impl AuthorizationItemSetBuilder {
 
     /// Adds an `AuthorizationItem` with NULL terminated string data.
     ///
-    /// If `name` or `value` isn't convertable to a `CString` it will return
+    /// If `name` or `value` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn add_string<N, V>(mut self, name: N, value: V) -> Result<Self>
     where
@@ -297,6 +308,7 @@ impl TryFrom<AuthorizationExternalForm> for Authorization {
 impl Authorization {
     /// Creates an authorization object which has no environment or associated
     /// rights.
+    #[allow(clippy::should_implement_trait)]
     #[inline]
     pub fn default() -> Result<Self> {
         Self::new(None, None, Default::default())
@@ -307,7 +319,7 @@ impl Authorization {
     ///
     /// `rights` should be the names of the rights you want to create.
     ///
-    /// `environment` is used when authorizing or preauthorizing rights. Not
+    /// `environment` is used when authorizing or pre-authorizing rights. Not
     /// used in OS X v10.2 and earlier. In macOS 10.3 and later, you can pass
     /// icon or prompt data to be used in the authentication dialog box. In
     /// macOS 10.4 and later, you can also pass a user name and password in
@@ -318,13 +330,13 @@ impl Authorization {
         environment: Option<AuthorizationItemSetStorage>,
         flags: Flags,
     ) -> Result<Self> {
-        let rights_ptr = rights.as_ref().map_or(std::ptr::null(), |r| {
-            addr_of!(r.set) as *const sys::AuthorizationItemSet
-        });
+        let rights_ptr = rights
+            .as_ref()
+            .map_or(std::ptr::null(), |r| addr_of!(r.set) as *const _);
 
-        let env_ptr = environment.as_ref().map_or(std::ptr::null(), |e| {
-            addr_of!(e.set) as *const sys::AuthorizationItemSet
-        });
+        let env_ptr = environment
+            .as_ref()
+            .map_or(std::ptr::null(), |e| addr_of!(e.set) as *const _);
 
         let mut handle = MaybeUninit::<sys::AuthorizationRef>::uninit();
 
@@ -361,7 +373,7 @@ impl Authorization {
     ///
     /// `name` can be a wildcard right name.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn get_right<T: Into<Vec<u8>>>(name: T) -> Result<CFDictionary<CFString, CFTypeRef>> {
         let name = cstring_or_err!(name)?;
@@ -381,7 +393,7 @@ impl Authorization {
     /// Checks if a right exists within the policy database. This is the same as
     /// `get_right`, but avoids a dictionary allocation.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn right_exists<T: Into<Vec<u8>>>(name: T) -> Result<bool> {
         let name = cstring_or_err!(name)?;
@@ -395,7 +407,7 @@ impl Authorization {
     ///
     /// `name` cannot be a wildcard right name.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn remove_right<T: Into<Vec<u8>>>(&self, name: T) -> Result<()> {
         let name = cstring_or_err!(name)?;
@@ -417,7 +429,7 @@ impl Authorization {
     ///
     /// `definition` can be either a `CFDictionaryRef` containing keys defining
     /// the rules or a `CFStringRef` representing the name of another right
-    /// whose rules you wish to duplicaate.
+    /// whose rules you wish to duplicate.
     ///
     /// `description` is a key which can be used to look up localized
     /// descriptions.
@@ -426,7 +438,7 @@ impl Authorization {
     ///
     /// `localeTableName` will be used to get localizations if provided.
     ///
-    /// If `name` isn't convertable to a `CString` it will return
+    /// If `name` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn set_right<T: Into<Vec<u8>>>(
         &self,
@@ -470,9 +482,9 @@ impl Authorization {
     /// retrieve this supporting data, such as the user name.
     ///
     /// `tag` should specify the type of data the Security Server should return.
-    /// If `None`, all available information is retreieved.
+    /// If `None`, all available information is retrieved.
     ///
-    /// If `tag` isn't convertable to a `CString` it will return
+    /// If `tag` isn't convertible to a `CString` it will return
     /// Err(errSecConversionError).
     pub fn copy_info<T: Into<Vec<u8>>>(&self, tag: Option<T>) -> Result<AuthorizationItemSet<'_>> {
         let tag_with_nul: CString;
@@ -618,7 +630,8 @@ impl Authorization {
         flags: Flags,
         make_pipe: bool,
     ) -> Result<Option<File>> {
-        use std::os::unix::io::{FromRawFd, RawFd};
+        use std::os::unix::io::FromRawFd;
+        use std::os::unix::io::RawFd;
 
         let c_cmd = cstring_or_err!(command)?;
 
@@ -715,6 +728,8 @@ mod tests {
     }
 
     fn create_credentials_env() -> Result<AuthorizationItemSetStorage> {
+        #![allow(clippy::option_env_unwrap)]
+
         let set = AuthorizationItemSetBuilder::new()
             .add_string(
                 "username",
@@ -722,7 +737,7 @@ mod tests {
             )?
             .add_string(
                 "password",
-                option_env!("PASSWORD").expect("You must set the PASSWORD environment varible"),
+                option_env!("PASSWORD").expect("You must set the PASSWORD environment variable"),
             )?
             .build();
 
@@ -838,7 +853,8 @@ mod tests {
 
         let file = auth.execute_with_privileges_piped("/bin/ls", ["/"], Flags::DEFAULTS)?;
 
-        use std::io::{self, BufRead};
+        use std::io::BufRead;
+        use std::io::{self};
         for line in io::BufReader::new(file).lines() {
             let _ = line.unwrap();
         }

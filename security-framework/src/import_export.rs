@@ -2,22 +2,23 @@
 
 use std::ptr;
 
-use core_foundation::{
-    array::CFArray,
-    base::{CFType, TCFType},
-    data::CFData,
-    dictionary::CFDictionary,
-    string::CFString,
-};
+use core_foundation::array::CFArray;
+use core_foundation::base::CFType;
+use core_foundation::base::TCFType;
+use core_foundation::data::CFData;
+use core_foundation::dictionary::CFDictionary;
+use core_foundation::string::CFString;
 use security_framework_sys::import_export::*;
 
+use crate::base::Result;
+use crate::certificate::SecCertificate;
+use crate::cvt;
+use crate::identity::SecIdentity;
 #[cfg(target_os = "macos")]
 use crate::os::macos::access::SecAccess;
 #[cfg(target_os = "macos")]
 use crate::os::macos::keychain::SecKeychain;
-use crate::{
-    base::Result, certificate::SecCertificate, cvt, identity::SecIdentity, trust::SecTrust,
-};
+use crate::trust::SecTrust;
 
 /// Information about an imported identity.
 pub struct ImportedIdentity {

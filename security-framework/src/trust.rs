@@ -2,20 +2,24 @@
 
 use std::ptr;
 
+use core_foundation::array::CFArray;
 #[cfg(target_os = "macos")]
 use core_foundation::array::CFArrayRef;
+use core_foundation::base::TCFType;
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
 use core_foundation::data::CFData;
-use core_foundation::{
-    array::CFArray,
-    base::TCFType,
-    date::CFDate,
-    error::{CFError, CFErrorRef},
-};
-use core_foundation_sys::base::{Boolean, CFIndex};
+use core_foundation::date::CFDate;
+use core_foundation::error::CFError;
+use core_foundation::error::CFErrorRef;
+use core_foundation_sys::base::Boolean;
+use core_foundation_sys::base::CFIndex;
 use security_framework_sys::trust::*;
 
-use crate::{base::Result, certificate::SecCertificate, cvt, key::SecKey, policy::SecPolicy};
+use crate::base::Result;
+use crate::certificate::SecCertificate;
+use crate::cvt;
+use crate::key::SecKey;
+use crate::policy::SecPolicy;
 
 /// The result of trust evaluation.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -179,7 +183,7 @@ impl SecTrust {
         unsafe { cvt(SecTrustSetNetworkFetchAllowed(self.0, allowed as u8)) }
     }
 
-    /// Attaches Online Certificate Status Protocol (OSCP) response data
+    /// Attaches Online Certificate Status Protocol (OCSP) response data
     /// to this trust object.
     #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
     pub fn set_trust_ocsp_response<I: Iterator<Item = impl AsRef<[u8]>>>(
@@ -253,7 +257,8 @@ impl SecTrust {
         #[cfg(not(any(feature = "OSX_10_14", target_os = "ios")))]
         #[allow(deprecated)]
         {
-            use security_framework_sys::base::{errSecNotTrusted, errSecTrustSettingDeny};
+            use security_framework_sys::base::errSecNotTrusted;
+            use security_framework_sys::base::errSecTrustSettingDeny;
 
             let code = match self.evaluate() {
                 Ok(res) if res.success() => return Ok(()),
@@ -318,9 +323,10 @@ fn cferror_from_osstatus(code: core_foundation_sys::base::OSStatus) -> CFError {
 
 #[cfg(test)]
 mod test {
-    use crate::{
-        policy::SecPolicy, secure_transport::SslProtocolSide, test::certificate, trust::SecTrust,
-    };
+    use crate::policy::SecPolicy;
+    use crate::secure_transport::SslProtocolSide;
+    use crate::test::certificate;
+    use crate::trust::SecTrust;
 
     #[test]
     #[allow(deprecated)]
@@ -328,7 +334,7 @@ mod test {
         let cert = certificate();
         let ssl_policy = SecPolicy::create_ssl(SslProtocolSide::CLIENT, Some("certifi.io"));
         let trust = SecTrust::create_with_certificates(&[cert], &[ssl_policy]).unwrap();
-        assert_eq!(trust.evaluate().unwrap().success(), false)
+        assert!(!trust.evaluate().unwrap().success())
     }
 
     #[test]
@@ -393,7 +399,7 @@ mod test {
         let mut trust = SecTrust::create_with_certificates(&[cert], &[ssl_policy]).unwrap();
         let ssl_policy = SecPolicy::create_ssl(SslProtocolSide::CLIENT, Some("certifi.io"));
         trust.set_policy(&ssl_policy).unwrap();
-        assert_eq!(trust.evaluate().unwrap().success(), false)
+        assert!(!trust.evaluate().unwrap().success())
     }
 
     #[test]

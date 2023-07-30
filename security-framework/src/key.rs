@@ -2,49 +2,69 @@
 
 use std::fmt;
 
+use core_foundation::base::TCFType;
+use core_foundation::base::ToVoid;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::boolean::CFBoolean;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::data::CFData;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::dictionary::CFDictionary;
+use core_foundation::dictionary::CFMutableDictionary;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use core_foundation::error::{CFError, CFErrorRef};
+use core_foundation::error::CFError;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use core_foundation::error::CFErrorRef;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::number::CFNumber;
-use core_foundation::{
-    base::{TCFType, ToVoid},
-    dictionary::CFMutableDictionary,
-    string::{CFString, CFStringRef},
-};
+use core_foundation::string::CFString;
+use core_foundation::string::CFStringRef;
+use security_framework_sys::base::SecKeyRef;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use security_framework_sys::item::kSecAttrApplicationLabel;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use security_framework_sys::item::{
-    kSecAttrIsPermanent, kSecAttrKeySizeInBits, kSecAttrKeyType, kSecAttrLabel, kSecPrivateKeyAttrs,
-};
+use security_framework_sys::item::kSecAttrIsPermanent;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::item::kSecAttrKeySizeInBits;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::item::kSecAttrKeyType;
 #[cfg(target_os = "macos")]
-use security_framework_sys::item::{
-    kSecAttrKeyType3DES, kSecAttrKeyTypeAES, kSecAttrKeyTypeCAST, kSecAttrKeyTypeDES,
-    kSecAttrKeyTypeDSA, kSecAttrKeyTypeRC4,
-};
+use security_framework_sys::item::kSecAttrKeyType3DES;
+#[cfg(target_os = "macos")]
+use security_framework_sys::item::kSecAttrKeyTypeAES;
+#[cfg(target_os = "macos")]
+use security_framework_sys::item::kSecAttrKeyTypeCAST;
+#[cfg(target_os = "macos")]
+use security_framework_sys::item::kSecAttrKeyTypeDES;
+#[cfg(target_os = "macos")]
+use security_framework_sys::item::kSecAttrKeyTypeDSA;
+#[cfg(target_os = "macos")]
+use security_framework_sys::item::kSecAttrKeyTypeRC4;
+use security_framework_sys::item::kSecAttrKeyTypeRSA;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::item::kSecAttrLabel;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::item::kSecPrivateKeyAttrs;
+use security_framework_sys::item::kSecValueRef;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 pub use security_framework_sys::key::Algorithm;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use security_framework_sys::key::{
-    SecKeyCopyAttributes, SecKeyCopyExternalRepresentation, SecKeyCopyPublicKey,
-    SecKeyCreateRandomKey, SecKeyCreateSignature,
-};
-use security_framework_sys::{
-    base::SecKeyRef,
-    item::{kSecAttrKeyTypeRSA, kSecValueRef},
-    key::SecKeyGetTypeID,
-    keychain_item::SecItemDelete,
-};
+use security_framework_sys::key::SecKeyCopyAttributes;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::key::SecKeyCopyExternalRepresentation;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::key::SecKeyCopyPublicKey;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::key::SecKeyCreateRandomKey;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::key::SecKeyCreateSignature;
+use security_framework_sys::key::SecKeyGetTypeID;
+use security_framework_sys::keychain_item::SecItemDelete;
 
+use crate::base::Error;
+use crate::cvt;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use crate::item::Location;
-use crate::{base::Error, cvt};
 
 /// Types of `SecKey`s.
 #[derive(Debug, Copy, Clone)]
@@ -300,11 +320,11 @@ impl GenerateKeyOptions {
 
     /// Collect options into a `CFDictioanry`
     pub fn to_dictionary(&self) -> CFDictionary {
+        use security_framework_sys::item::kSecAttrTokenID;
+        use security_framework_sys::item::kSecAttrTokenIDSecureEnclave;
+        use security_framework_sys::item::kSecPublicKeyAttrs;
         #[cfg(target_os = "macos")]
         use security_framework_sys::item::kSecUseKeychain;
-        use security_framework_sys::item::{
-            kSecAttrTokenID, kSecAttrTokenIDSecureEnclave, kSecPublicKeyAttrs,
-        };
 
         let is_permanent = CFBoolean::from(self.location.is_some());
         let private_attributes = CFMutableDictionary::from_CFType_pairs(&[(

@@ -1,27 +1,26 @@
 //! OSX specific extensions to certificate functionality.
 
-use std::{convert::TryInto, os::raw::c_void, ptr};
+use std::convert::TryInto;
+use std::os::raw::c_void;
+use std::ptr;
 
-use core_foundation::{
-    array::{CFArray, CFArrayIterator},
-    base::{TCFType, ToVoid},
-    data::CFData,
-    dictionary::CFDictionary,
-    error::CFError,
-    string::CFString,
-};
+use core_foundation::array::CFArray;
+use core_foundation::array::CFArrayIterator;
+use core_foundation::base::TCFType;
+use core_foundation::base::ToVoid;
+use core_foundation::data::CFData;
+use core_foundation::dictionary::CFDictionary;
+use core_foundation::error::CFError;
+use core_foundation::string::CFString;
 use security_framework_sys::certificate::*;
 
-use crate::{
-    base::Error,
-    certificate::SecCertificate,
-    cvt,
-    key::SecKey,
-    os::macos::{
-        certificate_oids::CertificateOid,
-        digest_transform::{Builder, DigestType},
-    },
-};
+use crate::base::Error;
+use crate::certificate::SecCertificate;
+use crate::cvt;
+use crate::key::SecKey;
+use crate::os::macos::certificate_oids::CertificateOid;
+use crate::os::macos::digest_transform::Builder;
+use crate::os::macos::digest_transform::DigestType;
 
 /// An extension trait adding OSX specific functionality to `SecCertificate`.
 pub trait SecCertificateExt {
@@ -230,7 +229,8 @@ mod test {
     use std::collections::HashMap;
 
     use super::*;
-    use crate::{os::macos::certificate_oids::CertificateOid, test::certificate};
+    use crate::os::macos::certificate_oids::CertificateOid;
+    use crate::test::certificate;
 
     #[test]
     fn common_name() {
