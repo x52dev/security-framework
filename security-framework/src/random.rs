@@ -5,6 +5,17 @@ use std::io;
 use security_framework_sys::random::{kSecRandomDefault, SecRandomCopyBytes, SecRandomRef};
 
 /// A source of random data.
+///
+/// # Examples
+///
+/// ```
+/// let rng = security_framework::random::SecRandom::default();
+///
+/// let mut buf = [0; 32];
+/// rng.copy_bytes(&mut buf).unwrap();
+///
+/// println!("{}", hex::encode(buf));
+/// ```
 pub struct SecRandom(SecRandomRef);
 
 unsafe impl Sync for SecRandom {}

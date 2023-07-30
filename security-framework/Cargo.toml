@@ -21,11 +21,11 @@ log = { version = "0.4.17", optional = true }
 num-bigint = { version = "0.4.3", optional = true }
 
 [dev-dependencies]
-hex = "0.4.3"
 env_logger = "0.10"
-x509-parser = "0.15"
+hex = "0.4"
 time = "0.3.17"
 tempfile = "3.3"
+x509-parser = "0.15"
 
 [features]
 default = ["OSX_10_9"]
