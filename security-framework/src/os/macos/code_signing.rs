@@ -2,58 +2,32 @@
 
 #![allow(clippy::bad_bit_mask)] // false positive on bitflags
 
-use std::fmt::Debug;
-use std::mem::MaybeUninit;
-use std::str::FromStr;
+use std::{fmt::Debug, mem::MaybeUninit, str::FromStr};
 
-use core_foundation::base::TCFType;
-use core_foundation::base::TCFTypeRef;
-use core_foundation::base::ToVoid;
-use core_foundation::data::CFDataRef;
-use core_foundation::dictionary::CFMutableDictionary;
-use core_foundation::number::CFNumber;
-use core_foundation::string::CFString;
-use core_foundation::string::CFStringRef;
-use core_foundation::url::CFURL;
+use core_foundation::{
+    base::{TCFType, TCFTypeRef, ToVoid},
+    data::CFDataRef,
+    dictionary::CFMutableDictionary,
+    number::CFNumber,
+    string::{CFString, CFStringRef},
+    url::CFURL,
+};
 use libc::pid_t;
-use security_framework_sys::code_signing::kSecCSBasicValidateOnly;
-use security_framework_sys::code_signing::kSecCSCheckAllArchitectures;
-use security_framework_sys::code_signing::kSecCSCheckGatekeeperArchitectures;
-use security_framework_sys::code_signing::kSecCSCheckNestedCode;
-use security_framework_sys::code_signing::kSecCSCheckTrustedAnchors;
-use security_framework_sys::code_signing::kSecCSConsiderExpiration;
-use security_framework_sys::code_signing::kSecCSDoNotValidateExecutable;
-use security_framework_sys::code_signing::kSecCSDoNotValidateResources;
-use security_framework_sys::code_signing::kSecCSEnforceRevocationChecks;
-use security_framework_sys::code_signing::kSecCSFullReport;
-use security_framework_sys::code_signing::kSecCSNoNetworkAccess;
-use security_framework_sys::code_signing::kSecCSQuickCheck;
-use security_framework_sys::code_signing::kSecCSReportProgress;
-use security_framework_sys::code_signing::kSecCSRestrictSidebandData;
-use security_framework_sys::code_signing::kSecCSRestrictSymlinks;
-use security_framework_sys::code_signing::kSecCSRestrictToAppLike;
-use security_framework_sys::code_signing::kSecCSSingleThreaded;
-use security_framework_sys::code_signing::kSecCSStrictValidate;
-use security_framework_sys::code_signing::kSecCSUseSoftwareSigningCert;
-use security_framework_sys::code_signing::kSecCSValidatePEH;
-use security_framework_sys::code_signing::kSecGuestAttributeAudit;
-use security_framework_sys::code_signing::kSecGuestAttributePid;
-use security_framework_sys::code_signing::SecCodeCheckValidity;
-use security_framework_sys::code_signing::SecCodeCopyGuestWithAttributes;
-use security_framework_sys::code_signing::SecCodeCopyPath;
-use security_framework_sys::code_signing::SecCodeCopySelf;
-use security_framework_sys::code_signing::SecCodeGetTypeID;
-use security_framework_sys::code_signing::SecCodeRef;
-use security_framework_sys::code_signing::SecRequirementCreateWithString;
-use security_framework_sys::code_signing::SecRequirementGetTypeID;
-use security_framework_sys::code_signing::SecRequirementRef;
-use security_framework_sys::code_signing::SecStaticCodeCheckValidity;
-use security_framework_sys::code_signing::SecStaticCodeCreateWithPath;
-use security_framework_sys::code_signing::SecStaticCodeGetTypeID;
-use security_framework_sys::code_signing::SecStaticCodeRef;
+use security_framework_sys::code_signing::{
+    kSecCSBasicValidateOnly, kSecCSCheckAllArchitectures, kSecCSCheckGatekeeperArchitectures,
+    kSecCSCheckNestedCode, kSecCSCheckTrustedAnchors, kSecCSConsiderExpiration,
+    kSecCSDoNotValidateExecutable, kSecCSDoNotValidateResources, kSecCSEnforceRevocationChecks,
+    kSecCSFullReport, kSecCSNoNetworkAccess, kSecCSQuickCheck, kSecCSReportProgress,
+    kSecCSRestrictSidebandData, kSecCSRestrictSymlinks, kSecCSRestrictToAppLike,
+    kSecCSSingleThreaded, kSecCSStrictValidate, kSecCSUseSoftwareSigningCert, kSecCSValidatePEH,
+    kSecGuestAttributeAudit, kSecGuestAttributePid, SecCodeCheckValidity,
+    SecCodeCopyGuestWithAttributes, SecCodeCopyPath, SecCodeCopySelf, SecCodeGetTypeID, SecCodeRef,
+    SecRequirementCreateWithString, SecRequirementGetTypeID, SecRequirementRef,
+    SecStaticCodeCheckValidity, SecStaticCodeCreateWithPath, SecStaticCodeGetTypeID,
+    SecStaticCodeRef,
+};
 
-use crate::cvt;
-use crate::Result;
+use crate::{cvt, Result};
 
 bitflags::bitflags! {
     /// Values that can be used in the flags parameter to most code signing
@@ -357,9 +331,7 @@ impl SecStaticCode {
 #[cfg(test)]
 mod test {
     use core_foundation::data::CFData;
-    use libc::c_uint;
-    use libc::c_void;
-    use libc::KERN_SUCCESS;
+    use libc::{c_uint, c_void, KERN_SUCCESS};
 
     use super::*;
 

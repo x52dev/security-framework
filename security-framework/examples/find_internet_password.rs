@@ -1,9 +1,8 @@
 #[cfg(target_os = "macos")]
-use security_framework::os::macos::keychain::SecKeychain;
-#[cfg(target_os = "macos")]
-use security_framework::os::macos::passwords::SecAuthenticationType;
-#[cfg(target_os = "macos")]
-use security_framework::os::macos::passwords::SecProtocolType;
+use security_framework::os::macos::{
+    keychain::SecKeychain,
+    passwords::{SecAuthenticationType, SecProtocolType},
+};
 
 fn main() {
     #[cfg(target_os = "macos")]

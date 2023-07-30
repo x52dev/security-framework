@@ -1,18 +1,16 @@
 //! Access Control support.
 
-use std::ptr::null;
-use std::ptr::{self};
+use std::ptr::{
+    null, {self},
+};
 
-use core_foundation::base::kCFAllocatorDefault;
-use core_foundation::base::CFOptionFlags;
-use core_foundation::base::TCFType;
-use security_framework_sys::access_control::SecAccessControlCreateWithFlags;
-use security_framework_sys::access_control::SecAccessControlGetTypeID;
-use security_framework_sys::base::errSecParam;
-use security_framework_sys::base::SecAccessControlRef;
+use core_foundation::base::{kCFAllocatorDefault, CFOptionFlags, TCFType};
+use security_framework_sys::{
+    access_control::{SecAccessControlCreateWithFlags, SecAccessControlGetTypeID},
+    base::{errSecParam, SecAccessControlRef},
+};
 
-use crate::base::Error;
-use crate::base::Result;
+use crate::base::{Error, Result};
 
 declare_TCFType! {
     /// A type representing sec access control settings.

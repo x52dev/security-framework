@@ -1,6 +1,7 @@
-use std::io::Read;
-use std::io::Write;
-use std::net::TcpStream;
+use std::{
+    io::{Read, Write},
+    net::TcpStream,
+};
 
 use security_framework::secure_transport::ClientBuilder;
 

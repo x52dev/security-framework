@@ -1,27 +1,24 @@
 //! Password support.
 
-use std::fmt;
-use std::fmt::Write;
-use std::ops::Deref;
-use std::ptr;
-use std::slice;
+use std::{fmt, fmt::Write, ops::Deref, ptr, slice};
 
-use core_foundation::array::CFArray;
-use core_foundation::base::TCFType;
-pub use security_framework_sys::keychain::SecAuthenticationType;
-use security_framework_sys::keychain::SecKeychainAddGenericPassword;
-use security_framework_sys::keychain::SecKeychainAddInternetPassword;
-use security_framework_sys::keychain::SecKeychainFindGenericPassword;
-use security_framework_sys::keychain::SecKeychainFindInternetPassword;
-pub use security_framework_sys::keychain::SecProtocolType;
-use security_framework_sys::keychain_item::SecKeychainItemDelete;
-use security_framework_sys::keychain_item::SecKeychainItemFreeContent;
-use security_framework_sys::keychain_item::SecKeychainItemModifyAttributesAndData;
+use core_foundation::{array::CFArray, base::TCFType};
+pub use security_framework_sys::keychain::{SecAuthenticationType, SecProtocolType};
+use security_framework_sys::{
+    keychain::{
+        SecKeychainAddGenericPassword, SecKeychainAddInternetPassword,
+        SecKeychainFindGenericPassword, SecKeychainFindInternetPassword,
+    },
+    keychain_item::{
+        SecKeychainItemDelete, SecKeychainItemFreeContent, SecKeychainItemModifyAttributesAndData,
+    },
+};
 
-use crate::base::Result;
-use crate::cvt;
-use crate::os::macos::keychain::SecKeychain;
-use crate::os::macos::keychain_item::SecKeychainItem;
+use crate::{
+    base::Result,
+    cvt,
+    os::macos::{keychain::SecKeychain, keychain_item::SecKeychainItem},
+};
 
 /// Password slice. Use `.as_ref()` to get `&[u8]` or `.to_owned()` to get `Vec<u8>`
 pub struct SecKeychainItemPassword {
@@ -348,12 +345,10 @@ impl SecKeychain {
 
 #[cfg(test)]
 mod test {
-    use tempfile::tempdir;
-    use tempfile::TempDir;
+    use tempfile::{tempdir, TempDir};
 
     use super::*;
-    use crate::os::macos::keychain::CreateOptions;
-    use crate::os::macos::keychain::SecKeychain;
+    use crate::os::macos::keychain::{CreateOptions, SecKeychain};
 
     fn temp_keychain_setup(name: &str) -> (TempDir, SecKeychain) {
         let dir = tempdir().expect("TempDir::new");

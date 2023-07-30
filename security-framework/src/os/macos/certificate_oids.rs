@@ -1,6 +1,5 @@
 //! OIDs associated with certificate properties.
-use core_foundation::base::TCFType;
-use core_foundation::string::CFString;
+use core_foundation::{base::TCFType, string::CFString};
 use core_foundation_sys::string::CFStringRef;
 use security_framework_sys::certificate_oids::kSecOIDX509V1SignatureAlgorithm;
 

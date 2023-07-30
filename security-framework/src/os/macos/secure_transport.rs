@@ -1,18 +1,17 @@
 //! OSX specific extensions to Secure Transport functionality.
 
-use std::ptr;
-use std::slice;
+use std::{ptr, slice};
 
-use core_foundation::array::CFArray;
-use core_foundation::base::TCFType;
+use core_foundation::{array::CFArray, base::TCFType};
 use security_framework_sys::secure_transport::*;
 
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cvt;
-use crate::secure_transport::MidHandshakeSslStream;
-use crate::secure_transport::SslContext;
-use crate::AsInner;
+use crate::{
+    base::Result,
+    certificate::SecCertificate,
+    cvt,
+    secure_transport::{MidHandshakeSslStream, SslContext},
+    AsInner,
+};
 
 /// An extension trait adding OSX specific functionality to the `SslContext`
 /// type.
@@ -214,18 +213,19 @@ impl<S> MidHandshakeSslStreamExt for MidHandshakeSslStream<S> {
 
 #[cfg(test)]
 mod test {
-    use std::io::prelude::*;
-    use std::net::TcpListener;
-    use std::net::TcpStream;
-    use std::thread;
+    use std::{
+        io::prelude::*,
+        net::{TcpListener, TcpStream},
+        thread,
+    };
 
     use tempfile::tempdir;
 
     use super::*;
-    use crate::cipher_suite::CipherSuite;
-    use crate::os::macos::test::identity;
-    use crate::secure_transport::*;
-    use crate::test::certificate;
+    use crate::{
+        cipher_suite::CipherSuite, os::macos::test::identity, secure_transport::*,
+        test::certificate,
+    };
 
     #[test]
     fn server_client() {

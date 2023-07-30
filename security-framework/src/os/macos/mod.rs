@@ -18,17 +18,13 @@ pub mod transform;
 
 #[cfg(test)]
 pub mod test {
-    use std::fs::File;
-    use std::io::prelude::*;
-    use std::path::Path;
+    use std::{fs::File, io::prelude::*, path::Path};
 
-    use crate::identity::SecIdentity;
-    use crate::item::ItemClass;
-    use crate::item::ItemSearchOptions;
-    use crate::item::Reference;
-    use crate::item::SearchResult;
-    use crate::os::macos::item::ItemSearchOptionsExt;
-    use crate::os::macos::keychain::SecKeychain;
+    use crate::{
+        identity::SecIdentity,
+        item::{ItemClass, ItemSearchOptions, Reference, SearchResult},
+        os::macos::{item::ItemSearchOptionsExt, keychain::SecKeychain},
+    };
 
     pub fn identity(dir: &Path) -> SecIdentity {
         // FIXME https://github.com/rust-lang/rust/issues/30018

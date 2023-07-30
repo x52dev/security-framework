@@ -1,36 +1,29 @@
 //! Support to search for items in a keychain.
 
-use std::collections::HashMap;
-use std::fmt;
-use std::ptr;
+use std::{collections::HashMap, fmt, ptr};
 
-use core_foundation::array::CFArray;
-use core_foundation::base::CFType;
-use core_foundation::base::TCFType;
-use core_foundation::base::ToVoid;
-use core_foundation::boolean::CFBoolean;
-use core_foundation::data::CFData;
-use core_foundation::date::CFDate;
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::dictionary::CFMutableDictionary;
-use core_foundation::number::CFNumber;
-use core_foundation::string::CFString;
-use core_foundation_sys::base::CFCopyDescription;
-use core_foundation_sys::base::CFGetTypeID;
-use core_foundation_sys::base::CFRelease;
-use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::string::CFStringRef;
-use security_framework_sys::item::*;
-use security_framework_sys::keychain_item::SecItemAdd;
-use security_framework_sys::keychain_item::SecItemCopyMatching;
+use core_foundation::{
+    array::CFArray,
+    base::{CFType, TCFType, ToVoid},
+    boolean::CFBoolean,
+    data::CFData,
+    date::CFDate,
+    dictionary::{CFDictionary, CFMutableDictionary},
+    number::CFNumber,
+    string::CFString,
+};
+use core_foundation_sys::{
+    base::{CFCopyDescription, CFGetTypeID, CFRelease, CFTypeRef},
+    string::CFStringRef,
+};
+use security_framework_sys::{
+    item::*,
+    keychain_item::{SecItemAdd, SecItemCopyMatching},
+};
 
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cvt;
-use crate::identity::SecIdentity;
-use crate::key::SecKey;
 #[cfg(target_os = "macos")]
 use crate::os::macos::keychain::SecKeychain;
+use crate::{base::Result, certificate::SecCertificate, cvt, identity::SecIdentity, key::SecKey};
 
 /// Specifies the type of items to search for.
 #[derive(Debug, Copy, Clone)]

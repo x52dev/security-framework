@@ -3,30 +3,21 @@
 //! If you want the extended keychain facilities only available on macOS, use the
 //! version of these functions in the macOS extensions module.
 
-use core_foundation::base::TCFType;
-use core_foundation::boolean::CFBoolean;
-use core_foundation::data::CFData;
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::string::CFString;
-use core_foundation_sys::base::CFGetTypeID;
-use core_foundation_sys::base::CFRelease;
-use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::data::CFDataRef;
-use security_framework_sys::base::errSecDuplicateItem;
-use security_framework_sys::base::errSecParam;
-use security_framework_sys::item::kSecReturnData;
-use security_framework_sys::item::kSecValueData;
-use security_framework_sys::keychain::SecAuthenticationType;
-use security_framework_sys::keychain::SecProtocolType;
-use security_framework_sys::keychain_item::SecItemAdd;
-use security_framework_sys::keychain_item::SecItemCopyMatching;
-use security_framework_sys::keychain_item::SecItemDelete;
-use security_framework_sys::keychain_item::SecItemUpdate;
+use core_foundation::{
+    base::TCFType, boolean::CFBoolean, data::CFData, dictionary::CFDictionary, string::CFString,
+};
+use core_foundation_sys::{
+    base::{CFGetTypeID, CFRelease, CFTypeRef},
+    data::CFDataRef,
+};
+use security_framework_sys::{
+    base::{errSecDuplicateItem, errSecParam},
+    item::{kSecReturnData, kSecValueData},
+    keychain::{SecAuthenticationType, SecProtocolType},
+    keychain_item::{SecItemAdd, SecItemCopyMatching, SecItemDelete, SecItemUpdate},
+};
 
-use crate::base::Result;
-use crate::cvt;
-use crate::passwords_options::PasswordOptions;
-use crate::Error;
+use crate::{base::Result, cvt, passwords_options::PasswordOptions, Error};
 
 /// Set a generic password for the given service and account.
 /// Creates or updates a keychain entry.

@@ -1,45 +1,46 @@
 //! Certificate support.
 
-use std::fmt;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use std::ops::Deref;
-use std::ptr;
+use std::{fmt, ptr};
 
-use core_foundation::array::CFArray;
-use core_foundation::array::CFArrayRef;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::base::FromVoid;
-use core_foundation::base::TCFType;
-use core_foundation::base::ToVoid;
-use core_foundation::data::CFData;
-use core_foundation::dictionary::CFMutableDictionary;
 #[cfg(any(feature = "OSX_10_13", target_os = "ios"))]
 use core_foundation::error::CFError;
 #[cfg(any(feature = "OSX_10_13", target_os = "ios"))]
 use core_foundation::error::CFErrorRef;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::number::CFNumber;
-use core_foundation::string::CFString;
+use core_foundation::{
+    array::{CFArray, CFArrayRef},
+    base::{TCFType, ToVoid},
+    data::CFData,
+    dictionary::CFMutableDictionary,
+    string::CFString,
+};
 use core_foundation_sys::base::kCFAllocatorDefault;
 #[cfg(feature = "serial-number-bigint")]
 use num_bigint::BigUint;
 #[cfg(target_os = "ios")]
 use security_framework_sys::base::errSecNotTrusted;
-use security_framework_sys::base::errSecParam;
 #[cfg(target_os = "ios")]
 use security_framework_sys::base::errSecSuccess;
-use security_framework_sys::base::SecCertificateRef;
-use security_framework_sys::certificate::*;
-use security_framework_sys::item::kSecValueRef;
-use security_framework_sys::keychain_item::SecItemDelete;
+use security_framework_sys::{
+    base::{errSecParam, SecCertificateRef},
+    certificate::*,
+    item::kSecValueRef,
+    keychain_item::SecItemDelete,
+};
 
-use crate::base::Error;
-use crate::base::Result;
-use crate::cvt;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use crate::key;
 #[cfg(target_os = "macos")]
 use crate::os::macos::keychain::SecKeychain;
+use crate::{
+    base::{Error, Result},
+    cvt,
+};
 
 declare_TCFType! {
     /// A type representing a certificate.
@@ -172,8 +173,7 @@ impl SecCertificate {
     #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
     #[must_use]
     fn pk_to_der(&self, public_key: key::SecKey) -> Option<Vec<u8>> {
-        use security_framework_sys::item::kSecAttrKeySizeInBits;
-        use security_framework_sys::item::kSecAttrKeyType;
+        use security_framework_sys::item::{kSecAttrKeySizeInBits, kSecAttrKeyType};
 
         let public_key_attributes = public_key.attributes();
         let public_key_type = public_key_attributes
@@ -198,8 +198,7 @@ impl SecCertificate {
     pub fn public_key(&self) -> Result<key::SecKey> {
         use std::slice::from_ref;
 
-        use crate::policy::SecPolicy;
-        use crate::trust::SecTrust;
+        use crate::{policy::SecPolicy, trust::SecTrust};
 
         let policy = SecPolicy::create_x509();
         let mut trust = SecTrust::create_with_certificates(from_ref(self), from_ref(&policy))?;
@@ -227,8 +226,7 @@ impl SecCertificate {
 
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 fn get_asn1_header_bytes(pkt: CFString, ksz: u32) -> Option<&'static [u8]> {
-    use security_framework_sys::item::kSecAttrKeyTypeECSECPrimeRandom;
-    use security_framework_sys::item::kSecAttrKeyTypeRSA;
+    use security_framework_sys::item::{kSecAttrKeyTypeECSECPrimeRandom, kSecAttrKeyTypeRSA};
 
     if pkt == unsafe { CFString::wrap_under_get_rule(kSecAttrKeyTypeRSA) } && ksz == 2048 {
         return Some(&RSA_2048_ASN1_HEADER);

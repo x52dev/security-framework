@@ -72,54 +72,54 @@
 //! }
 //!
 //! ```
-use std::any::Any;
-use std::cmp;
-use std::fmt;
-use std::io::prelude::*;
-use std::io::{self};
-use std::marker::PhantomData;
-use std::os::raw::c_void;
-use std::panic::AssertUnwindSafe;
-use std::panic::{self};
-use std::ptr;
-use std::result;
-use std::slice;
+use std::{
+    any::Any,
+    cmp, fmt,
+    io::{
+        prelude::*,
+        {self},
+    },
+    marker::PhantomData,
+    os::raw::c_void,
+    panic::{
+        AssertUnwindSafe, {self},
+    },
+    ptr, result, slice,
+};
 
 #[allow(unused_imports)]
 use core_foundation::array::CFArray;
 #[allow(unused_imports)]
 use core_foundation::array::CFArrayRef;
-use core_foundation::base::Boolean;
-use core_foundation::base::TCFType;
+use core_foundation::base::{Boolean, TCFType};
 #[cfg(feature = "alpn")]
 use core_foundation::string::CFString;
-use core_foundation_sys::base::kCFAllocatorDefault;
-use core_foundation_sys::base::OSStatus;
+use core_foundation_sys::base::{kCFAllocatorDefault, OSStatus};
 #[allow(unused_imports)]
 use security_framework_sys::base::errSecBadReq;
 #[allow(unused_imports)]
 use security_framework_sys::base::errSecIO;
 #[allow(unused_imports)]
 use security_framework_sys::base::errSecNotTrusted;
-use security_framework_sys::base::errSecParam;
 #[allow(unused_imports)]
 use security_framework_sys::base::errSecSuccess;
 #[allow(unused_imports)]
 use security_framework_sys::base::errSecTrustSettingDeny;
 #[allow(unused_imports)]
 use security_framework_sys::base::errSecUnimplemented;
-use security_framework_sys::secure_transport::*;
+use security_framework_sys::{base::errSecParam, secure_transport::*};
 
-use crate::base::Error;
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cipher_suite::CipherSuite;
-use crate::cvt;
-use crate::identity::SecIdentity;
-use crate::import_export::Pkcs12ImportOptions;
-use crate::policy::SecPolicy;
-use crate::trust::SecTrust;
-use crate::AsInner;
+use crate::{
+    base::{Error, Result},
+    certificate::SecCertificate,
+    cipher_suite::CipherSuite,
+    cvt,
+    identity::SecIdentity,
+    import_export::Pkcs12ImportOptions,
+    policy::SecPolicy,
+    trust::SecTrust,
+    AsInner,
+};
 
 /// Specifies a side of a TLS session.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -1506,9 +1506,7 @@ impl ServerBuilder {
 
 #[cfg(test)]
 mod test {
-    use std::io;
-    use std::io::prelude::*;
-    use std::net::TcpStream;
+    use std::{io, io::prelude::*, net::TcpStream};
 
     use super::*;
 

@@ -1,24 +1,23 @@
 //! OSX specific extensions to import/export functionality.
 
-use std::ptr;
-use std::str::FromStr;
+use std::{ptr, str::FromStr};
 
-use core_foundation::array::CFArray;
-use core_foundation::base::CFType;
-use core_foundation::base::TCFType;
-use core_foundation::data::CFData;
-use core_foundation::string::CFString;
-use security_framework_sys::base::errSecSuccess;
-use security_framework_sys::import_export::*;
+use core_foundation::{
+    array::CFArray,
+    base::{CFType, TCFType},
+    data::CFData,
+    string::CFString,
+};
+use security_framework_sys::{base::errSecSuccess, import_export::*};
 
-use crate::base::Error;
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::identity::SecIdentity;
-use crate::import_export::Pkcs12ImportOptions;
-use crate::key::SecKey;
-use crate::os::macos::access::SecAccess;
-use crate::os::macos::keychain::SecKeychain;
+use crate::{
+    base::{Error, Result},
+    certificate::SecCertificate,
+    identity::SecIdentity,
+    import_export::Pkcs12ImportOptions,
+    key::SecKey,
+    os::macos::{access::SecAccess, keychain::SecKeychain},
+};
 
 /// An extension trait adding OSX specific functionality to `Pkcs12ImportOptions`.
 pub trait Pkcs12ImportOptionsExt {
@@ -247,8 +246,7 @@ mod test {
     use tempfile::tempdir;
 
     use super::*;
-    use crate::import_export::*;
-    use crate::os::macos::keychain;
+    use crate::{import_export::*, os::macos::keychain};
 
     #[test]
     fn certificate() {

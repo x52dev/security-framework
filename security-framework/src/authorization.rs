@@ -2,31 +2,29 @@
 
 #![allow(clippy::bad_bit_mask)] // false positive on bitflags
 
-use std::convert::TryFrom;
-use std::convert::TryInto;
-use std::ffi::CStr;
-use std::ffi::CString;
-use std::fs::File;
-use std::marker::PhantomData;
-use std::mem::MaybeUninit;
-use std::os::raw::c_void;
-use std::ptr::addr_of;
+use std::{
+    convert::{TryFrom, TryInto},
+    ffi::{CStr, CString},
+    fs::File,
+    marker::PhantomData,
+    mem::MaybeUninit,
+    os::raw::c_void,
+    ptr::addr_of,
+};
 
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
 use core_foundation::base::Boolean;
-use core_foundation::base::CFTypeRef;
-use core_foundation::base::TCFType;
-use core_foundation::bundle::CFBundleRef;
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::dictionary::CFDictionaryRef;
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
 use core_foundation::error::CFError;
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
 use core_foundation::error::CFErrorRef;
-use core_foundation::string::CFString;
-use core_foundation::string::CFStringRef;
-use security_framework_sys::authorization as sys;
-use security_framework_sys::base::errSecConversionError;
+use core_foundation::{
+    base::{CFTypeRef, TCFType},
+    bundle::CFBundleRef,
+    dictionary::{CFDictionary, CFDictionaryRef},
+    string::{CFString, CFStringRef},
+};
+use security_framework_sys::{authorization as sys, base::errSecConversionError};
 use sys::AuthorizationExternalForm;
 
 /// # Potential improvements
@@ -631,8 +629,7 @@ impl Authorization {
         flags: Flags,
         make_pipe: bool,
     ) -> Result<Option<File>> {
-        use std::os::unix::io::FromRawFd;
-        use std::os::unix::io::RawFd;
+        use std::os::unix::io::{FromRawFd, RawFd};
 
         let c_cmd = cstring_or_err!(command)?;
 
@@ -854,8 +851,9 @@ mod tests {
 
         let file = auth.execute_with_privileges_piped("/bin/ls", ["/"], Flags::DEFAULTS)?;
 
-        use std::io::BufRead;
-        use std::io::{self};
+        use std::io::{
+            BufRead, {self},
+        };
         for line in io::BufReader::new(file).lines() {
             let _ = line.unwrap();
         }

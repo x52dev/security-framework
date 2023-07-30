@@ -1,23 +1,24 @@
 //! Identity support.
 
-use std::fmt;
-use std::ptr;
+use std::{fmt, ptr};
 
-use core_foundation::base::TCFType;
-use core_foundation::base::ToVoid;
-use core_foundation::dictionary::CFMutableDictionary;
-use security_framework_sys::base::SecIdentityRef;
-use security_framework_sys::identity::SecIdentityCopyCertificate;
-use security_framework_sys::identity::SecIdentityCopyPrivateKey;
-use security_framework_sys::identity::SecIdentityGetTypeID;
-use security_framework_sys::item::kSecValueRef;
-use security_framework_sys::keychain_item::SecItemDelete;
+use core_foundation::{
+    base::{TCFType, ToVoid},
+    dictionary::CFMutableDictionary,
+};
+use security_framework_sys::{
+    base::SecIdentityRef,
+    identity::{SecIdentityCopyCertificate, SecIdentityCopyPrivateKey, SecIdentityGetTypeID},
+    item::kSecValueRef,
+    keychain_item::SecItemDelete,
+};
 
-use crate::base::Error;
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cvt;
-use crate::key::SecKey;
+use crate::{
+    base::{Error, Result},
+    certificate::SecCertificate,
+    cvt,
+    key::SecKey,
+};
 
 declare_TCFType! {
     /// A type representing an identity.

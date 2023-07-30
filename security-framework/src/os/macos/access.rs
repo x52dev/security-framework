@@ -1,8 +1,7 @@
 //! Access functionality.
 
 use core_foundation::base::TCFType;
-use security_framework_sys::access::SecAccessGetTypeID;
-use security_framework_sys::base::SecAccessRef;
+use security_framework_sys::{access::SecAccessGetTypeID, base::SecAccessRef};
 
 declare_TCFType! {
     /// A type representing access settings.
