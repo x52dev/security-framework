@@ -1,6 +1,6 @@
 [package]
 name = "systest"
-version = "0.1.0"
+version = "0.0.0"
 publish = false
 authors = ["Steven Fackler <sfackler@palantir.com>"]
 edition = "2021"
