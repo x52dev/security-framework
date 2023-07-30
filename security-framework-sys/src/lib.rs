@@ -1,3 +1,4 @@
+#![deny(rust_2018_idioms, future_incompatible)]
 #![allow(bad_style)]
 
 #[cfg_attr(

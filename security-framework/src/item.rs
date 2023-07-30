@@ -431,20 +431,22 @@ unsafe fn get_item(item: CFTypeRef) -> SearchResult {
 /// not have specific object types; they are modeled using dictionaries and so
 /// are available directly as search results in variant `SearchResult::Dict`.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Reference {
     /// A `SecIdentity`.
     Identity(SecIdentity),
+
     /// A `SecCertificate`.
     Certificate(SecCertificate),
+
     /// A `SecKey`.
     Key(SecKey),
+
     /// A `SecKeychainItem`.
     ///
     /// Only defined on OSX
     #[cfg(target_os = "macos")]
     KeychainItem(crate::os::macos::keychain_item::SecKeychainItem),
-    #[doc(hidden)]
-    __NonExhaustive,
 }
 
 /// An individual search result.

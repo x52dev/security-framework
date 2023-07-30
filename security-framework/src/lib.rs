@@ -1,7 +1,8 @@
-//! Wrappers around the OSX Security Framework.
+//! Wrappers around the macOS Security Framework.
+
+#![deny(rust_2018_idioms, future_incompatible)]
 #![warn(missing_docs)]
 #![allow(non_upper_case_globals)]
-#![allow(clippy::manual_non_exhaustive)] // MSRV
 
 #[macro_use]
 extern crate core_foundation;

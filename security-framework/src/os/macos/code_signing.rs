@@ -1,7 +1,5 @@
 //! Code signing services.
 
-#![allow(clippy::bad_bit_mask)] // false positive on bitflags
-
 use std::{fmt::Debug, mem::MaybeUninit, str::FromStr};
 
 use core_foundation::{

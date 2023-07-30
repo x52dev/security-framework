@@ -1,7 +1,5 @@
 //! Authorization Services support.
 
-#![allow(clippy::bad_bit_mask)] // false positive on bitflags
-
 use std::{
     convert::{TryFrom, TryInto},
     ffi::{CStr, CString},
@@ -13,11 +11,10 @@ use std::{
 };
 
 #[cfg(all(target_os = "macos", feature = "job-bless"))]
-use core_foundation::base::Boolean;
-#[cfg(all(target_os = "macos", feature = "job-bless"))]
-use core_foundation::error::CFError;
-#[cfg(all(target_os = "macos", feature = "job-bless"))]
-use core_foundation::error::CFErrorRef;
+use core_foundation::{
+    base::Boolean,
+    error::{CFError, CFErrorRef},
+};
 use core_foundation::{
     base::{CFTypeRef, TCFType},
     bundle::CFBundleRef,
@@ -34,6 +31,7 @@ use sys::AuthorizationExternalForm;
 /// * `AuthorizationCopyRightsAsync`
 /// * Provide constants for well known item names
 use crate::base::Error;
+
 /// # Potential improvements
 ///
 /// * When generic specialization stabilizes prevent copying from `CString`
