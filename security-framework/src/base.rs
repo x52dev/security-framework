@@ -1,11 +1,9 @@
 //! Support types for other modules.
 
+use std::{error, fmt, num::NonZeroI32, result};
+
 use core_foundation::string::CFString;
 use core_foundation_sys::base::OSStatus;
-use std::error;
-use std::fmt;
-use std::num::NonZeroI32;
-use std::result;
 
 /// A `Result` type commonly returned by functions.
 pub type Result<T, E = Error> = result::Result<T, E>;
@@ -44,9 +42,10 @@ impl Error {
 
     #[cold]
     fn inner_message(self) -> Option<String> {
+        use std::ptr;
+
         use core_foundation::base::TCFType;
         use security_framework_sys::base::SecCopyErrorMessageString;
-        use std::ptr;
 
         unsafe {
             let s = SecCopyErrorMessageString(self.code(), ptr::null_mut());

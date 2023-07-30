@@ -10,13 +10,13 @@
 //! linked and used for testing.
 
 use security_framework::passwords::{
-    delete_generic_password, delete_internet_password,
-    get_generic_password, get_internet_password,
+    delete_generic_password, delete_internet_password, get_generic_password, get_internet_password,
     set_generic_password, set_internet_password,
 };
-use security_framework_sys::base::errSecItemNotFound;
-use security_framework_sys::keychain::SecAuthenticationType::Any;
-use security_framework_sys::keychain::SecProtocolType::HTTP;
+use security_framework_sys::{
+    base::errSecItemNotFound,
+    keychain::{SecAuthenticationType::Any, SecProtocolType::HTTP},
+};
 
 #[no_mangle]
 extern "C" fn test() {
@@ -41,19 +41,28 @@ fn test_missing_generic_password() {
     match result {
         Ok(()) => (),
         Err(err) if err.code() == errSecItemNotFound => (),
-        Err(err) => panic!("test_missing_generic_password: delete failed with status: {}", err.code()),
+        Err(err) => panic!(
+            "test_missing_generic_password: delete failed with status: {}",
+            err.code(),
+        ),
     };
     let result = get_generic_password(name, name);
     match result {
         Ok(bytes) => panic!("test_missing_password: get returned {:?}", bytes),
         Err(err) if err.code() == errSecItemNotFound => (),
-        Err(err) => panic!("test_missing_generic_password: get failed with status: {}", err.code()),
+        Err(err) => panic!(
+            "test_missing_generic_password: get failed with status: {}",
+            err.code(),
+        ),
     };
     let result = delete_generic_password(name, name);
     match result {
         Ok(()) => panic!("test_missing_generic_password: second delete found a password"),
         Err(err) if err.code() == errSecItemNotFound => (),
-        Err(err) => panic!("test_missing_generic_password: delete failed with status: {}", err.code()),
+        Err(err) => panic!(
+            "test_missing_generic_password: delete failed with status: {}",
+            err.code(),
+        ),
     };
     println!("test_missing_generic_password: pass");
 }
@@ -124,19 +133,28 @@ fn test_missing_internet_password() {
     match result {
         Ok(()) => (),
         Err(err) if err.code() == errSecItemNotFound => (),
-        Err(err) => panic!("test_missing_internet_password: delete failed with status: {}", err.code()),
+        Err(err) => panic!(
+            "test_missing_internet_password: delete failed with status: {}",
+            err.code(),
+        ),
     };
     let result = get_internet_password(name, None, name, "/test", None, HTTP, Any);
     match result {
         Ok(bytes) => panic!("test_missing_password: get returned {:?}", bytes),
         Err(err) if err.code() == errSecItemNotFound => (),
-        Err(err) => panic!("test_missing_internet_password: get failed with status: {}", err.code()),
+        Err(err) => panic!(
+            "test_missing_internet_password: get failed with status: {}",
+            err.code(),
+        ),
     };
     let result = delete_internet_password(name, None, name, "/test", None, HTTP, Any);
     match result {
         Ok(()) => panic!("test_missing_internet_password: second delete found a password"),
         Err(err) if err.code() == errSecItemNotFound => (),
-        Err(err) => panic!("test_missing_internet_password: delete failed with status: {}", err.code()),
+        Err(err) => panic!(
+            "test_missing_internet_password: delete failed with status: {}",
+            err.code(),
+        ),
     };
     println!("test_missing_internet_password: pass");
 }
@@ -157,7 +175,8 @@ fn test_round_trip_ascii_internet_password() {
     let name = "test_round_trip_ascii_internet_password";
     let password = "test ascii password".as_bytes();
     set_internet_password(name, None, name, "/test", None, HTTP, Any, password).unwrap();
-    let stored_password = get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
+    let stored_password =
+        get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     assert_eq!(stored_password, password);
     delete_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     println!("test_round_trip_ascii_internet_password: pass");
@@ -168,7 +187,8 @@ fn test_round_trip_non_ascii_internet_password() {
     let name = "test_round_trip_non_ascii_internet_password";
     let password = "このきれいな花は桜です".as_bytes();
     set_internet_password(name, None, name, "/test", None, HTTP, Any, password).unwrap();
-    let stored_password = get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
+    let stored_password =
+        get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     assert_eq!(stored_password, password);
     delete_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     println!("test_round_trip_non_ascii_internet_password: pass");
@@ -179,7 +199,8 @@ fn test_round_trip_non_utf8_internet_password() {
     let name = "test_round_trip_non_utf8_internet_password";
     let password: [u8; 10] = [0, 121, 122, 123, 40, 50, 126, 127, 8, 9];
     set_internet_password(name, None, name, "/test", None, HTTP, Any, &password).unwrap();
-    let stored_password = get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
+    let stored_password =
+        get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     assert_eq!(stored_password, password);
     delete_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     println!("test_round_trip_non_utf8_internet_password: pass");
@@ -190,11 +211,13 @@ fn test_update_internet_password() {
     let name = "test_update_internet_password";
     let password = "test ascii password".as_bytes();
     set_internet_password(name, None, name, "/test", None, HTTP, Any, password).unwrap();
-    let stored_password = get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
+    let stored_password =
+        get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     assert_eq!(stored_password, password);
     let password = "このきれいな花は桜です".as_bytes();
     set_internet_password(name, None, name, "/test", None, HTTP, Any, password).unwrap();
-    let stored_password = get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
+    let stored_password =
+        get_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     assert_eq!(stored_password, password);
     delete_internet_password(name, None, name, "/test", None, HTTP, Any).unwrap();
     println!("test_update_internet_password: pass");

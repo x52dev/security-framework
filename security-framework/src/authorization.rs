@@ -1,5 +1,30 @@
 //! Authorization Services support.
 
+use std::{
+    convert::{TryFrom, TryInto},
+    ffi::{CStr, CString},
+    fs::File,
+    marker::PhantomData,
+    mem::MaybeUninit,
+    os::raw::c_void,
+    ptr::addr_of,
+};
+
+#[cfg(all(target_os = "macos", feature = "job-bless"))]
+use core_foundation::base::Boolean;
+#[cfg(all(target_os = "macos", feature = "job-bless"))]
+use core_foundation::error::CFError;
+#[cfg(all(target_os = "macos", feature = "job-bless"))]
+use core_foundation::error::CFErrorRef;
+use core_foundation::{
+    base::{CFTypeRef, TCFType},
+    bundle::CFBundleRef,
+    dictionary::{CFDictionary, CFDictionaryRef},
+    string::{CFString, CFStringRef},
+};
+use security_framework_sys::{authorization as sys, base::errSecConversionError};
+use sys::AuthorizationExternalForm;
+
 /// # Potential improvements
 ///
 /// * When generic specialization stabilizes prevent copying from `CString`
@@ -7,26 +32,6 @@
 /// * `AuthorizationCopyRightsAsync`
 /// * Provide constants for well known item names
 use crate::base::{Error, Result};
-#[cfg(all(target_os = "macos", feature = "job-bless"))]
-use core_foundation::base::Boolean;
-use core_foundation::base::{CFTypeRef, TCFType};
-use core_foundation::bundle::CFBundleRef;
-use core_foundation::dictionary::{CFDictionary, CFDictionaryRef};
-#[cfg(all(target_os = "macos", feature = "job-bless"))]
-use core_foundation::error::CFError;
-#[cfg(all(target_os = "macos", feature = "job-bless"))]
-use core_foundation::error::CFErrorRef;
-use core_foundation::string::{CFString, CFStringRef};
-use security_framework_sys::authorization as sys;
-use security_framework_sys::base::errSecConversionError;
-use std::convert::TryFrom;
-use std::ffi::{CStr, CString};
-use std::fs::File;
-use std::mem::MaybeUninit;
-use std::os::raw::c_void;
-use std::ptr::addr_of;
-use std::{convert::TryInto, marker::PhantomData};
-use sys::AuthorizationExternalForm;
 
 macro_rules! optional_str_to_cfref {
     ($string:ident) => {{
@@ -85,7 +90,8 @@ impl AuthorizationItem {
     ///
     /// If `name` isn't convertable to a `CString` it will return
     /// Err(errSecConversionError).
-    #[must_use] pub fn name(&self) -> &str {
+    #[must_use]
+    pub fn name(&self) -> &str {
         unsafe {
             CStr::from_ptr(self.0.name)
                 .to_str()
@@ -96,7 +102,8 @@ impl AuthorizationItem {
     /// The information pertaining to the name field. Do not rely on NULL
     /// termination of string data.
     #[inline]
-    #[must_use] pub fn value(&self) -> Option<&[u8]> {
+    #[must_use]
+    pub fn value(&self) -> Option<&[u8]> {
         if self.0.value.is_null() {
             return None;
         }
@@ -528,9 +535,15 @@ impl Authorization {
         use std::os::unix::ffi::OsStrExt;
 
         let arguments = arguments
-            .into_iter().flat_map(|a| CString::new(a.as_ref().as_bytes()))
+            .into_iter()
+            .flat_map(|a| CString::new(a.as_ref().as_bytes()))
             .collect::<Vec<_>>();
-        self.execute_with_privileges_internal(command.as_ref().as_os_str().as_bytes(), &arguments, flags, false)?;
+        self.execute_with_privileges_internal(
+            command.as_ref().as_os_str().as_bytes(),
+            &arguments,
+            flags,
+            false,
+        )?;
         Ok(())
     }
 
@@ -552,9 +565,17 @@ impl Authorization {
         use std::os::unix::ffi::OsStrExt;
 
         let arguments = arguments
-            .into_iter().flat_map(|a| CString::new(a.as_ref().as_bytes()))
+            .into_iter()
+            .flat_map(|a| CString::new(a.as_ref().as_bytes()))
             .collect::<Vec<_>>();
-        Ok(self.execute_with_privileges_internal(command.as_ref().as_os_str().as_bytes(), &arguments, flags, true)?.unwrap())
+        Ok(self
+            .execute_with_privileges_internal(
+                command.as_ref().as_os_str().as_bytes(),
+                &arguments,
+                flags,
+                true,
+            )?
+            .unwrap())
     }
 
     /// Submits the executable for the given label as a `launchd` job.
@@ -601,7 +622,10 @@ impl Authorization {
 
         let c_cmd = cstring_or_err!(command)?;
 
-        let mut c_args = arguments.iter().map(|a| a.as_ptr() as _).collect::<Vec<_>>();
+        let mut c_args = arguments
+            .iter()
+            .map(|a| a.as_ptr() as _)
+            .collect::<Vec<_>>();
         c_args.push(std::ptr::null_mut());
 
         let mut pipe: *mut libc::FILE = std::ptr::null_mut();
@@ -612,7 +636,11 @@ impl Authorization {
                 c_cmd.as_ptr(),
                 flags.bits(),
                 c_args.as_ptr(),
-                if make_pipe { &mut pipe } else { std::ptr::null_mut() },
+                if make_pipe {
+                    &mut pipe
+                } else {
+                    std::ptr::null_mut()
+                },
             )
         };
 
@@ -639,8 +667,9 @@ impl Drop for Authorization {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use core_foundation::string::CFString;
+
+    use super::*;
 
     #[test]
     fn test_create_default_authorization() {

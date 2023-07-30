@@ -72,42 +72,40 @@
 //! }
 //!
 //! ```
+use std::{
+    any::Any,
+    cmp, fmt, io,
+    io::prelude::*,
+    marker::PhantomData,
+    os::raw::c_void,
+    panic::{self, AssertUnwindSafe},
+    ptr, result, slice,
+};
+
 #[allow(unused_imports)]
 use core_foundation::array::{CFArray, CFArrayRef};
-
 use core_foundation::base::{Boolean, TCFType};
 #[cfg(feature = "alpn")]
 use core_foundation::string::CFString;
 use core_foundation_sys::base::{kCFAllocatorDefault, OSStatus};
-use std::os::raw::c_void;
-
 #[allow(unused_imports)]
 use security_framework_sys::base::{
     errSecBadReq, errSecIO, errSecNotTrusted, errSecSuccess, errSecTrustSettingDeny,
     errSecUnimplemented,
 };
+use security_framework_sys::{base::errSecParam, secure_transport::*};
 
-use security_framework_sys::secure_transport::*;
-use std::any::Any;
-use std::cmp;
-use std::fmt;
-use std::io;
-use std::io::prelude::*;
-use std::marker::PhantomData;
-use std::panic::{self, AssertUnwindSafe};
-use std::ptr;
-use std::result;
-use std::slice;
-
-use crate::base::{Error, Result};
-use crate::certificate::SecCertificate;
-use crate::cipher_suite::CipherSuite;
-use crate::identity::SecIdentity;
-use crate::import_export::Pkcs12ImportOptions;
-use crate::policy::SecPolicy;
-use crate::trust::SecTrust;
-use crate::{cvt, AsInner};
-use security_framework_sys::base::errSecParam;
+use crate::{
+    base::{Error, Result},
+    certificate::SecCertificate,
+    cipher_suite::CipherSuite,
+    cvt,
+    identity::SecIdentity,
+    import_export::Pkcs12ImportOptions,
+    policy::SecPolicy,
+    trust::SecTrust,
+    AsInner,
+};
 
 /// Specifies a side of a TLS session.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -906,8 +904,7 @@ fn translate_err(e: &io::Error) -> OSStatus {
     match e.kind() {
         io::ErrorKind::NotFound => errSSLClosedGraceful,
         io::ErrorKind::ConnectionReset => errSSLClosedAbort,
-        io::ErrorKind::WouldBlock |
-        io::ErrorKind::NotConnected => errSSLWouldBlock,
+        io::ErrorKind::WouldBlock | io::ErrorKind::NotConnected => errSSLWouldBlock,
         _ => errSecIO,
     }
 }
@@ -1159,12 +1156,7 @@ impl<S: Read + Write> Write for SslStream<S> {
         }
         unsafe {
             let mut nwritten = 0;
-            let ret = SSLWrite(
-                self.ctx.0,
-                buf.as_ptr().cast(),
-                buf.len(),
-                &mut nwritten,
-            );
+            let ret = SSLWrite(self.ctx.0, buf.as_ptr().cast(), buf.len(), &mut nwritten);
             // just to be safe, base success off of nwritten rather than ret
             // for the same reason as in read
             if nwritten > 0 {
@@ -1500,9 +1492,7 @@ impl ServerBuilder {
 
 #[cfg(test)]
 mod test {
-    use std::io;
-    use std::io::prelude::*;
-    use std::net::TcpStream;
+    use std::{io, io::prelude::*, net::TcpStream};
 
     use super::*;
 

@@ -1,10 +1,12 @@
-use crate::base::SecCertificateRef;
-use crate::base::SecKeyRef;
-use core_foundation_sys::array::CFArrayRef;
-use core_foundation_sys::base::{Boolean, CFIndex, CFTypeID, CFTypeRef, OSStatus};
-use core_foundation_sys::date::CFDateRef;
 #[cfg(any(feature = "OSX_10_13", target_os = "ios"))]
 use core_foundation_sys::error::CFErrorRef;
+use core_foundation_sys::{
+    array::CFArrayRef,
+    base::{Boolean, CFIndex, CFTypeID, CFTypeRef, OSStatus},
+    date::CFDateRef,
+};
+
+use crate::base::{SecCertificateRef, SecKeyRef};
 
 pub type SecTrustResultType = u32;
 
@@ -66,7 +68,8 @@ extern "C" {
     #[cfg(target_os = "macos")]
     pub fn SecTrustSetOptions(trust: SecTrustRef, options: SecTrustOptionFlags) -> OSStatus;
     #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
-    pub fn SecTrustGetNetworkFetchAllowed(trust: SecTrustRef, allowFetch: *mut Boolean) -> OSStatus;
+    pub fn SecTrustGetNetworkFetchAllowed(trust: SecTrustRef, allowFetch: *mut Boolean)
+        -> OSStatus;
     #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
     pub fn SecTrustSetNetworkFetchAllowed(trust: SecTrustRef, allowFetch: Boolean) -> OSStatus;
     #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]

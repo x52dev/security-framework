@@ -25,7 +25,10 @@ macro_rules! p {
     };
 }
 
-#[cfg(all(not(feature = "OSX_10_13"), any(feature = "alpn", feature = "session-tickets")))]
+#[cfg(all(
+    not(feature = "OSX_10_13"),
+    any(feature = "alpn", feature = "session-tickets")
+))]
 #[macro_use]
 mod dlsym;
 

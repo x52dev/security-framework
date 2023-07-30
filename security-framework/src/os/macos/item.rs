@@ -1,10 +1,9 @@
 //! OSX specific functionality for items.
-use crate::item::ItemSearchOptions;
-use crate::os::macos::keychain::SecKeychain;
-use crate::ItemSearchOptionsInternals;
-
 // Moved to crate::Key
 pub use crate::key::KeyType;
+use crate::{
+    item::ItemSearchOptions, os::macos::keychain::SecKeychain, ItemSearchOptionsInternals,
+};
 
 /// An extension trait adding OSX specific functionality to `ItemSearchOptions`.
 pub trait ItemSearchOptionsExt {
@@ -23,11 +22,12 @@ impl ItemSearchOptionsExt for ItemSearchOptions {
 
 #[cfg(test)]
 mod test {
-    use crate::item::*;
-    use crate::os::macos::certificate::SecCertificateExt;
-    use crate::os::macos::item::ItemSearchOptionsExt;
-    use crate::os::macos::test::keychain;
     use tempfile::tempdir;
+
+    use crate::{
+        item::*,
+        os::macos::{certificate::SecCertificateExt, item::ItemSearchOptionsExt, test::keychain},
+    };
 
     #[test]
     fn find_certificate() {

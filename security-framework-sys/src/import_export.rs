@@ -1,12 +1,12 @@
-use core_foundation_sys::array::CFArrayRef;
-#[cfg(target_os = "macos")]
-use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::base::OSStatus;
-use core_foundation_sys::data::CFDataRef;
-use core_foundation_sys::dictionary::CFDictionaryRef;
-use core_foundation_sys::string::CFStringRef;
 #[cfg(target_os = "macos")]
 use std::os::raw::c_uint;
+
+#[cfg(target_os = "macos")]
+use core_foundation_sys::base::CFTypeRef;
+use core_foundation_sys::{
+    array::CFArrayRef, base::OSStatus, data::CFDataRef, dictionary::CFDictionaryRef,
+    string::CFStringRef,
+};
 
 #[cfg(target_os = "macos")]
 use crate::base::{SecAccessRef, SecKeychainRef};

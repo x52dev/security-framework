@@ -1,15 +1,15 @@
-use core_foundation_sys::array::CFArrayRef;
-use core_foundation_sys::base::{CFAllocatorRef, CFTypeID, OSStatus};
-use core_foundation_sys::data::CFDataRef;
 #[cfg(target_os = "macos")]
 use core_foundation_sys::dictionary::CFDictionaryRef;
 #[cfg(any(target_os = "macos", target_os = "ios"))]
 use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{
+    array::CFArrayRef,
+    base::{CFAllocatorRef, CFTypeID, OSStatus},
+    data::CFDataRef,
+    string::CFStringRef,
+};
 
-use crate::base::SecCertificateRef;
-use crate::base::SecKeyRef;
-use crate::base::SecKeychainRef;
+use crate::base::{SecCertificateRef, SecKeyRef, SecKeychainRef};
 
 extern "C" {
     #[cfg(target_os = "macos")]
@@ -61,7 +61,10 @@ extern "C" {
     pub fn SecCertificateCopyNormalizedSubjectSequence(certificate: SecCertificateRef)
         -> CFDataRef;
     #[cfg(target_os = "macos")]
-    #[cfg_attr(target_arch = "aarch64", link_name = "SecCertificateCopyPublicKey$LEGACYMAC")]
+    #[cfg_attr(
+        target_arch = "aarch64",
+        link_name = "SecCertificateCopyPublicKey$LEGACYMAC"
+    )]
     #[deprecated(note = "Deprecated by Apple. May not work any more. Use SecCertificateCopyKey")]
     pub fn SecCertificateCopyPublicKey(
         certificate: SecCertificateRef,

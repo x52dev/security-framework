@@ -1,8 +1,6 @@
-use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{error::CFErrorRef, string::CFStringRef};
 
-use crate::base::SecKeyRef;
-use crate::transform::SecTransformRef;
+use crate::{base::SecKeyRef, transform::SecTransformRef};
 
 extern "C" {
     pub static kSecEncryptionMode: CFStringRef;
@@ -24,6 +22,6 @@ extern "C" {
     // this symbol is apparently missing in 10.13.3?
     // pub fn SecDecryptTransformGetTypeID() -> CFTypeID;
     pub fn SecEncryptTransformCreate(keyRef: SecKeyRef, error: *mut CFErrorRef) -> SecTransformRef;
-// this symbol is apparently missing in 10.13.3?
-// pub fn SecEncryptTransformGetTypeID() -> CFTypeID;
+    // this symbol is apparently missing in 10.13.3?
+    // pub fn SecEncryptTransformGetTypeID() -> CFTypeID;
 }

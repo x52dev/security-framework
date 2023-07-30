@@ -1,22 +1,23 @@
 //! Security Framework type import/export support.
 
-use core_foundation::array::CFArray;
-use core_foundation::base::{CFType, TCFType};
-use core_foundation::data::CFData;
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::string::CFString;
-use security_framework_sys::import_export::*;
 use std::ptr;
 
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cvt;
-use crate::identity::SecIdentity;
+use core_foundation::{
+    array::CFArray,
+    base::{CFType, TCFType},
+    data::CFData,
+    dictionary::CFDictionary,
+    string::CFString,
+};
+use security_framework_sys::import_export::*;
+
 #[cfg(target_os = "macos")]
 use crate::os::macos::access::SecAccess;
 #[cfg(target_os = "macos")]
 use crate::os::macos::keychain::SecKeychain;
-use crate::trust::SecTrust;
+use crate::{
+    base::Result, certificate::SecCertificate, cvt, identity::SecIdentity, trust::SecTrust,
+};
 
 /// Information about an imported identity.
 pub struct ImportedIdentity {
@@ -99,7 +100,8 @@ impl Pkcs12ImportOptions {
                 options.as_concrete_TypeRef(),
                 &mut raw_items,
             ))?;
-            let raw_items = CFArray::<CFDictionary<CFString, *const _>>::wrap_under_create_rule(raw_items);
+            let raw_items =
+                CFArray::<CFDictionary<CFString, *const _>>::wrap_under_create_rule(raw_items);
 
             let mut items = vec![];
 
@@ -113,14 +115,14 @@ impl Pkcs12ImportOptions {
                 let trust = raw_item
                     .find(kSecImportItemTrust)
                     .map(|trust| SecTrust::wrap_under_get_rule(*trust as *mut _));
-                let cert_chain = raw_item.find(kSecImportItemCertChain.cast()).map(
-                    |cert_chain| {
+                let cert_chain = raw_item
+                    .find(kSecImportItemCertChain.cast())
+                    .map(|cert_chain| {
                         CFArray::<SecCertificate>::wrap_under_get_rule((*cert_chain).cast())
                             .iter()
                             .map(|c| c.clone())
                             .collect()
-                    },
-                );
+                    });
                 let identity = raw_item
                     .find(kSecImportItemIdentity)
                     .map(|identity| SecIdentity::wrap_under_get_rule(*identity as *mut _));

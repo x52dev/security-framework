@@ -1,12 +1,20 @@
 //! Support for password options, to be used with the passwords module
 
-use core_foundation::{string::CFString, base::{CFType, TCFType, CFOptionFlags}, number::CFNumber};
-use security_framework_sys::{keychain::{SecProtocolType, SecAuthenticationType}, access_control::*};
-use security_framework_sys::item::{
-    kSecAttrAccessControl, kSecAttrAccount, kSecAttrAuthenticationType, kSecAttrPath, kSecAttrPort, kSecAttrProtocol,
-    kSecAttrSecurityDomain, kSecAttrServer, kSecAttrService, kSecClass, kSecClassGenericPassword,
-    kSecClassInternetPassword,
+use core_foundation::{
+    base::{CFOptionFlags, CFType, TCFType},
+    number::CFNumber,
+    string::CFString,
 };
+use security_framework_sys::{
+    access_control::*,
+    item::{
+        kSecAttrAccessControl, kSecAttrAccount, kSecAttrAuthenticationType, kSecAttrPath,
+        kSecAttrPort, kSecAttrProtocol, kSecAttrSecurityDomain, kSecAttrServer, kSecAttrService,
+        kSecClass, kSecClassGenericPassword, kSecClassInternetPassword,
+    },
+    keychain::{SecAuthenticationType, SecProtocolType},
+};
+
 use crate::access_control::SecAccessControl;
 
 /// `PasswordOptions` constructor
@@ -46,7 +54,8 @@ impl PasswordOptions {
     /// Create a new generic password options
     /// Generic passwords are identified by service and account.  They have other
     /// attributes, but this interface doesn't allow specifying them.
-    #[must_use] pub fn new_generic_password(service: &str, account: &str) -> Self {
+    #[must_use]
+    pub fn new_generic_password(service: &str, account: &str) -> Self {
         let query = vec![
             (
                 unsafe { CFString::wrap_under_get_rule(kSecClass) },
@@ -67,7 +76,8 @@ impl PasswordOptions {
     /// Create a new internet password options
     /// Internet passwords are identified by a number of attributes.
     /// They can have others, but this interface doesn't allow specifying them.
-    #[must_use] pub fn new_internet_password(
+    #[must_use]
+    pub fn new_internet_password(
         server: &str,
         security_domain: Option<&str>,
         account: &str,

@@ -1,6 +1,8 @@
-use core_foundation_sys::base::{Boolean, CFTypeID, CFTypeRef};
-use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{
+    base::{Boolean, CFTypeID, CFTypeRef},
+    error::CFErrorRef,
+    string::CFStringRef,
+};
 
 pub type SecTransformRef = CFTypeRef;
 

@@ -10,12 +10,13 @@
 //! threads in the same process simultaneously can produce interference.
 //! So all the query tests have been conditioned to run serially.
 
-use core_foundation::base::TCFType;
-use core_foundation::string::CFString;
-use security_framework::item::{ItemClass, ItemSearchOptions, Limit, SearchResult};
+use core_foundation::{base::TCFType, string::CFString};
 #[cfg(target_os = "macos")]
 use security_framework::os::macos::keychain::SecKeychain;
-use security_framework::passwords::{delete_generic_password, set_generic_password};
+use security_framework::{
+    item::{ItemClass, ItemSearchOptions, Limit, SearchResult},
+    passwords::{delete_generic_password, set_generic_password},
+};
 use security_framework_sys::item::{kSecAttrAccount, kSecAttrService};
 use serial_test::serial;
 
@@ -152,9 +153,12 @@ fn find_leftover_test_generic_passwords() {
             _ => panic!("Got a non-dictionary from a password search"),
         }
     }
-    assert!(found.is_empty(), "There are {} entries created by older tests: {:?}",
-            found.len(),
-            &found);
+    assert!(
+        found.is_empty(),
+        "There are {} entries created by older tests: {:?}",
+        found.len(),
+        &found,
+    );
 }
 
 fn generate_random_string() -> String {

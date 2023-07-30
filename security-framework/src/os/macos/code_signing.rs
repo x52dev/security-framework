@@ -318,9 +318,10 @@ impl SecStaticCode {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use core_foundation::data::CFData;
     use libc::{c_uint, c_void, KERN_SUCCESS};
+
+    use super::*;
 
     #[test]
     fn path_to_static_code_and_back() {

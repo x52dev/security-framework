@@ -1,12 +1,10 @@
 //! OSX specific functionality for keys.
-use core_foundation::base::TCFType;
-use core_foundation::data::CFData;
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::error::CFError;
-use core_foundation::string::CFString;
-use security_framework_sys::item::kSecAttrKeyType;
-use security_framework_sys::key::SecKeyCreateFromData;
 use std::ptr;
+
+use core_foundation::{
+    base::TCFType, data::CFData, dictionary::CFDictionary, error::CFError, string::CFString,
+};
+use security_framework_sys::{item::kSecAttrKeyType, key::SecKeyCreateFromData};
 
 use crate::key::{KeyType, SecKey};
 

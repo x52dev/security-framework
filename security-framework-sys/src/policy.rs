@@ -1,7 +1,9 @@
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
 use core_foundation_sys::base::CFOptionFlags;
-use core_foundation_sys::base::{Boolean, CFTypeID};
-use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{
+    base::{Boolean, CFTypeID},
+    string::CFStringRef,
+};
 
 use crate::base::SecPolicyRef;
 
@@ -14,7 +16,8 @@ mod revocation_flags {
     pub const kSecRevocationPreferCRL: CFOptionFlags = 1 << 2;
     pub const kSecRevocationRequirePositiveResponse: CFOptionFlags = 1 << 3;
     pub const kSecRevocationNetworkAccessDisabled: CFOptionFlags = 1 << 4;
-    pub const kSecRevocationUseAnyAvailableMethod: CFOptionFlags = kSecRevocationOCSPMethod | kSecRevocationCRLMethod; 
+    pub const kSecRevocationUseAnyAvailableMethod: CFOptionFlags =
+        kSecRevocationOCSPMethod | kSecRevocationCRLMethod;
 }
 
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]

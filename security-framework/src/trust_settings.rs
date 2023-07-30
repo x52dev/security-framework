@@ -1,22 +1,25 @@
 //! Querying trust settings.
 
-use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{CFIndex, TCFType};
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::number::CFNumber;
-use core_foundation::string::CFString;
-
-use core_foundation_sys::base::CFTypeRef;
-use security_framework_sys::base::errSecNoTrustSettings;
-use security_framework_sys::base::errSecSuccess;
-use security_framework_sys::trust_settings::*;
-
 use std::ptr;
 
-use crate::base::Error;
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cvt;
+use core_foundation::{
+    array::{CFArray, CFArrayRef},
+    base::{CFIndex, TCFType},
+    dictionary::CFDictionary,
+    number::CFNumber,
+    string::CFString,
+};
+use core_foundation_sys::base::CFTypeRef;
+use security_framework_sys::{
+    base::{errSecNoTrustSettings, errSecSuccess},
+    trust_settings::*,
+};
+
+use crate::{
+    base::{Error, Result},
+    certificate::SecCertificate,
+    cvt,
+};
 
 /// Which set of trust settings to query
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -127,7 +130,7 @@ impl TrustSettings {
     ///
     /// It is not possible to modify per-user trust settings when not running in a GUI
     /// environment, if you try it will return error `2070: errSecInternalComponent`
-    #[cfg(target_os="macos")]
+    #[cfg(target_os = "macos")]
     pub fn set_trust_settings_always(&self, cert: &SecCertificate) -> Result<()> {
         let domain = self.domain;
         let trust_settings: CFTypeRef = ptr::null_mut();
@@ -152,14 +155,18 @@ impl TrustSettings {
     /// given domain `None` is returned.
     ///
     /// Otherwise, the specific trust settings are aggregated and returned.
-    pub fn tls_trust_settings_for_certificate(&self, cert: &SecCertificate)
-        -> Result<Option<TrustSettingsForCertificate>> {
+    pub fn tls_trust_settings_for_certificate(
+        &self,
+        cert: &SecCertificate,
+    ) -> Result<Option<TrustSettingsForCertificate>> {
         let trust_settings = unsafe {
             let mut array_ptr: CFArrayRef = ptr::null_mut();
             let cert_ptr = cert.as_CFTypeRef() as *mut _;
-            cvt(SecTrustSettingsCopyTrustSettings(cert_ptr,
-                                                  self.domain.into(),
-                                                  &mut array_ptr))?;
+            cvt(SecTrustSettingsCopyTrustSettings(
+                cert_ptr,
+                self.domain.into(),
+                &mut array_ptr,
+            ))?;
             CFArray::<CFDictionary>::wrap_under_create_rule(array_ptr)
         };
 
@@ -191,12 +198,14 @@ impl TrustSettings {
 
             // "Note that an empty Trust Settings array means "always trust this cert,
             //  with a resulting kSecTrustSettingsResult of kSecTrustSettingsResultTrustRoot"."
-            let trust_result = TrustSettingsForCertificate::new(maybe_trust_result
-                .unwrap_or_else(|| i64::from(kSecTrustSettingsResultTrustRoot)));
+            let trust_result = TrustSettingsForCertificate::new(
+                maybe_trust_result.unwrap_or_else(|| i64::from(kSecTrustSettingsResultTrustRoot)),
+            );
 
             match trust_result {
-                TrustSettingsForCertificate::Unspecified |
-                TrustSettingsForCertificate::Invalid => { continue; },
+                TrustSettingsForCertificate::Unspecified | TrustSettingsForCertificate::Invalid => {
+                    continue;
+                }
                 _ => return Ok(Some(trust_result)),
             }
         }
@@ -247,7 +256,10 @@ mod test {
 
         for (i, cert) in iterator.enumerate() {
             println!("cert({:?}) = {:?}", i, cert);
-            println!("  settings = {:?}", ts.tls_trust_settings_for_certificate(&cert));
+            println!(
+                "  settings = {:?}",
+                ts.tls_trust_settings_for_certificate(&cert)
+            );
         }
         println!("---");
     }
@@ -295,11 +307,12 @@ mod test {
     fn test_unknown_cert_is_not_trusted() {
         let ts = TrustSettings::new(Domain::System);
         let cert = certificate();
-        assert_eq!(ts.tls_trust_settings_for_certificate(&cert)
-                   .err()
-                   .unwrap()
-                   .message(),
-                   Some("The specified item could not be found in the keychain.".into()));
+        assert_eq!(
+            ts.tls_trust_settings_for_certificate(&cert)
+                .err()
+                .unwrap()
+                .message(),
+            Some("The specified item could not be found in the keychain.".into())
+        );
     }
 }
-

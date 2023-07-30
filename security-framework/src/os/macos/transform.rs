@@ -1,10 +1,13 @@
 //! Transform support
 
-use core_foundation::base::{CFType, TCFType};
-use core_foundation::error::CFError;
-use core_foundation::string::CFString;
-use security_framework_sys::transform::*;
 use std::ptr;
+
+use core_foundation::{
+    base::{CFType, TCFType},
+    error::CFError,
+    string::CFString,
+};
+use security_framework_sys::transform::*;
 
 declare_TCFType! {
     /// A type representing a transform.

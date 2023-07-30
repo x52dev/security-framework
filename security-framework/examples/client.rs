@@ -1,6 +1,9 @@
+use std::{
+    io::{Read, Write},
+    net::TcpStream,
+};
+
 use security_framework::secure_transport::ClientBuilder;
-use std::io::{Read, Write};
-use std::net::TcpStream;
 
 fn main() {
     let stream = TcpStream::connect("google.com:443").unwrap();

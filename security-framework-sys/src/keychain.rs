@@ -1,7 +1,8 @@
+use std::os::raw::{c_char, c_uint, c_void};
+
 #[cfg(target_os = "macos")]
 use core_foundation_sys::base::CFTypeRef;
 use core_foundation_sys::base::{Boolean, CFTypeID, OSStatus};
-use std::os::raw::{c_char, c_uint, c_void};
 
 #[cfg(target_os = "macos")]
 use crate::base::SecKeychainItemRef;

@@ -1,17 +1,12 @@
 //! Encryption and Decryption transform support.
 
-use core_foundation::base::TCFType;
-use core_foundation::data::CFData;
-use core_foundation::error::CFError;
-use core_foundation::string::CFString;
-use core_foundation_sys::data::CFDataRef;
-use core_foundation_sys::string::CFStringRef;
-use security_framework_sys::encrypt_transform::*;
-use security_framework_sys::transform::*;
 use std::ptr;
 
-use crate::key::SecKey;
-use crate::os::macos::transform::SecTransform;
+use core_foundation::{base::TCFType, data::CFData, error::CFError, string::CFString};
+use core_foundation_sys::{data::CFDataRef, string::CFStringRef};
+use security_framework_sys::{encrypt_transform::*, transform::*};
+
+use crate::{key::SecKey, os::macos::transform::SecTransform};
 
 #[derive(Debug, Copy, Clone)]
 /// The padding scheme to use for encryption.
@@ -207,9 +202,10 @@ mod test {
     use hex::FromHex;
 
     use super::*;
-    use crate::key::SecKey;
-    use crate::os::macos::item::KeyType;
-    use crate::os::macos::key::SecKeyExt;
+    use crate::{
+        key::SecKey,
+        os::macos::{item::KeyType, key::SecKeyExt},
+    };
 
     #[test]
     fn cbc_mmt_256() {

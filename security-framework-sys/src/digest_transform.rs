@@ -1,6 +1,8 @@
-use core_foundation_sys::base::{CFIndex, CFTypeRef};
-use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{
+    base::{CFIndex, CFTypeRef},
+    error::CFErrorRef,
+    string::CFStringRef,
+};
 
 use crate::transform::SecTransformRef;
 
@@ -23,6 +25,6 @@ extern "C" {
         error: *mut CFErrorRef,
     ) -> SecTransformRef;
 
-// this symbol is apparently missing in 10.13.3?
-// pub fn SecDigestTransformGetTypeID() -> CFTypeID;
+    // this symbol is apparently missing in 10.13.3?
+    // pub fn SecDigestTransformGetTypeID() -> CFTypeID;
 }

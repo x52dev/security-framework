@@ -1,8 +1,9 @@
-use core_foundation_sys::base::CFTypeID;
-use core_foundation_sys::base::OSStatus;
-use core_foundation_sys::dictionary::CFDictionaryRef;
-use core_foundation_sys::string::CFStringRef;
-use core_foundation_sys::url::CFURLRef;
+use core_foundation_sys::{
+    base::{CFTypeID, OSStatus},
+    dictionary::CFDictionaryRef,
+    string::CFStringRef,
+    url::CFURLRef,
+};
 
 pub enum OpaqueSecRequirementRef {}
 pub type SecRequirementRef = *mut OpaqueSecRequirementRef;

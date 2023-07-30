@@ -1,25 +1,24 @@
 //! Password support.
 
-use crate::os::macos::keychain::SecKeychain;
-use crate::os::macos::keychain_item::SecKeychainItem;
-use core_foundation::array::CFArray;
-use core_foundation::base::TCFType;
-pub use security_framework_sys::keychain::{SecAuthenticationType, SecProtocolType};
-use security_framework_sys::keychain::{
-    SecKeychainAddGenericPassword, SecKeychainAddInternetPassword, SecKeychainFindGenericPassword,
-    SecKeychainFindInternetPassword,
-};
-use security_framework_sys::keychain_item::{
-    SecKeychainItemDelete, SecKeychainItemFreeContent, SecKeychainItemModifyAttributesAndData,
-};
-use std::fmt;
-use std::fmt::Write;
-use std::ops::Deref;
-use std::ptr;
-use std::slice;
+use std::{fmt, fmt::Write, ops::Deref, ptr, slice};
 
-use crate::base::Result;
-use crate::cvt;
+use core_foundation::{array::CFArray, base::TCFType};
+pub use security_framework_sys::keychain::{SecAuthenticationType, SecProtocolType};
+use security_framework_sys::{
+    keychain::{
+        SecKeychainAddGenericPassword, SecKeychainAddInternetPassword,
+        SecKeychainFindGenericPassword, SecKeychainFindInternetPassword,
+    },
+    keychain_item::{
+        SecKeychainItemDelete, SecKeychainItemFreeContent, SecKeychainItemModifyAttributesAndData,
+    },
+};
+
+use crate::{
+    base::Result,
+    cvt,
+    os::macos::{keychain::SecKeychain, keychain_item::SecKeychainItem},
+};
 
 /// Password slice. Use `.as_ref()` to get `&[u8]` or `.to_owned()` to get `Vec<u8>`
 pub struct SecKeychainItemPassword {
@@ -167,8 +166,7 @@ pub fn find_internet_password(
             server.len() as u32,
             server.as_ptr().cast(),
             security_domain.map_or(0, |s| s.len() as u32),
-            security_domain
-                .map_or(ptr::null(), |s| s.as_ptr().cast()),
+            security_domain.map_or(ptr::null(), |s| s.as_ptr().cast()),
             account.len() as u32,
             account.as_ptr().cast(),
             path.len() as u32,
@@ -328,8 +326,7 @@ impl SecKeychain {
                 server.len() as u32,
                 server.as_ptr().cast(),
                 security_domain.map_or(0, |s| s.len() as u32),
-                security_domain
-                    .map_or(ptr::null(), |s| s.as_ptr().cast()),
+                security_domain.map_or(ptr::null(), |s| s.as_ptr().cast()),
                 account.len() as u32,
                 account.as_ptr().cast(),
                 path.len() as u32,
@@ -348,10 +345,10 @@ impl SecKeychain {
 
 #[cfg(test)]
 mod test {
+    use tempfile::{tempdir, TempDir};
+
     use super::*;
     use crate::os::macos::keychain::{CreateOptions, SecKeychain};
-    use tempfile::tempdir;
-    use tempfile::TempDir;
 
     fn temp_keychain_setup(name: &str) -> (TempDir, SecKeychain) {
         let dir = tempdir().expect("TempDir::new");

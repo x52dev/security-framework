@@ -1,14 +1,12 @@
 //! Security Policies support.
+use std::{fmt, ptr};
+
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
 use core_foundation::base::CFOptionFlags;
-use core_foundation::base::TCFType;
-use core_foundation::string::CFString;
+use core_foundation::{base::TCFType, string::CFString};
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
 use security_framework_sys::base::errSecParam;
-use security_framework_sys::base::SecPolicyRef;
-use security_framework_sys::policy::*;
-use std::fmt;
-use std::ptr;
+use security_framework_sys::{base::SecPolicyRef, policy::*};
 
 use crate::secure_transport::SslProtocolSide;
 #[cfg(any(feature = "OSX_10_9", target_os = "ios"))]
@@ -94,8 +92,7 @@ impl SecPolicy {
 
 #[cfg(test)]
 mod test {
-    use crate::policy::SecPolicy;
-    use crate::secure_transport::SslProtocolSide;
+    use crate::{policy::SecPolicy, secure_transport::SslProtocolSide};
 
     #[test]
     fn create_ssl() {

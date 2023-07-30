@@ -1,9 +1,10 @@
 // dlsym.rs is taken from mio
 // https://github.com/carllerche/mio/blob/master/src/sys/unix/dlsym.rs
 
-use std::marker;
-use std::mem;
-use std::sync::atomic::{AtomicUsize, Ordering};
+use std::{
+    marker, mem,
+    sync::atomic::{AtomicUsize, Ordering},
+};
 
 use libc;
 

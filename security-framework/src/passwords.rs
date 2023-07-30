@@ -3,22 +3,21 @@
 //! If you want the extended keychain facilities only available on macOS, use the
 //! version of these functions in the macOS extensions module.
 
-use crate::base::Result;
-use crate::passwords_options::PasswordOptions;
-use crate::{cvt, Error};
-use core_foundation::base::TCFType;
-use core_foundation::boolean::CFBoolean;
-use core_foundation::data::CFData;
-use core_foundation::dictionary::CFDictionary;
-use core_foundation::string::CFString;
-use core_foundation_sys::base::{CFGetTypeID, CFRelease, CFTypeRef};
-use core_foundation_sys::data::CFDataRef;
-use security_framework_sys::base::{errSecDuplicateItem, errSecParam};
-use security_framework_sys::item::{kSecReturnData, kSecValueData};
-use security_framework_sys::keychain::{SecAuthenticationType, SecProtocolType};
-use security_framework_sys::keychain_item::{
-    SecItemAdd, SecItemCopyMatching, SecItemDelete, SecItemUpdate,
+use core_foundation::{
+    base::TCFType, boolean::CFBoolean, data::CFData, dictionary::CFDictionary, string::CFString,
 };
+use core_foundation_sys::{
+    base::{CFGetTypeID, CFRelease, CFTypeRef},
+    data::CFDataRef,
+};
+use security_framework_sys::{
+    base::{errSecDuplicateItem, errSecParam},
+    item::{kSecReturnData, kSecValueData},
+    keychain::{SecAuthenticationType, SecProtocolType},
+    keychain_item::{SecItemAdd, SecItemCopyMatching, SecItemDelete, SecItemUpdate},
+};
+
+use crate::{base::Result, cvt, passwords_options::PasswordOptions, Error};
 
 /// Set a generic password for the given service and account.
 /// Creates or updates a keychain entry.
@@ -174,8 +173,9 @@ fn get_password_and_release(data: CFTypeRef) -> Result<Vec<u8>> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use security_framework_sys::base::errSecItemNotFound;
+
+    use super::*;
 
     #[test]
     fn missing_generic() {

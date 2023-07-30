@@ -1,19 +1,24 @@
 //! Keychain support.
 
+use std::{
+    ffi::CString,
+    os::{raw::c_void, unix::ffi::OsStrExt},
+    path::Path,
+    ptr,
+};
+
 use core_foundation::base::{Boolean, TCFType};
-use security_framework_sys::base::{errSecSuccess, SecKeychainRef};
-use security_framework_sys::keychain::*;
-use std::ffi::CString;
-use std::os::raw::c_void;
-use std::os::unix::ffi::OsStrExt;
-use std::path::Path;
-use std::ptr;
-
-use crate::base::{Error, Result};
-use crate::cvt;
-use crate::os::macos::access::SecAccess;
-
 pub use security_framework_sys::keychain::SecPreferencesDomain;
+use security_framework_sys::{
+    base::{errSecSuccess, SecKeychainRef},
+    keychain::*,
+};
+
+use crate::{
+    base::{Error, Result},
+    cvt,
+    os::macos::access::SecAccess,
+};
 
 declare_TCFType! {
     /// A type representing a keychain.
@@ -50,8 +55,9 @@ impl SecKeychain {
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self> {
         let path_name = [
             path.as_ref().as_os_str().as_bytes(),
-            std::slice::from_ref(&0)
-        ].concat();
+            std::slice::from_ref(&0),
+        ]
+        .concat();
 
         unsafe {
             let mut keychain = ptr::null_mut();

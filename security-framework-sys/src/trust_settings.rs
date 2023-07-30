@@ -1,7 +1,9 @@
+use core_foundation_sys::{
+    array::CFArrayRef,
+    base::{CFTypeRef, OSStatus},
+};
+
 use crate::base::SecCertificateRef;
-use core_foundation_sys::array::CFArrayRef;
-use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::base::OSStatus;
 
 pub type SecTrustSettingsDomain = u32;
 

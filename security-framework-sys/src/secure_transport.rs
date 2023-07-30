@@ -1,12 +1,13 @@
-use core_foundation_sys::array::CFArrayRef;
-use core_foundation_sys::base::CFAllocatorRef;
-#[cfg(target_os = "macos")]
-use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::base::{Boolean, OSStatus};
 use std::os::raw::{c_char, c_int, c_void};
 
-use crate::cipher_suite::SSLCipherSuite;
-use crate::trust::SecTrustRef;
+#[cfg(target_os = "macos")]
+use core_foundation_sys::base::CFTypeRef;
+use core_foundation_sys::{
+    array::CFArrayRef,
+    base::{Boolean, CFAllocatorRef, OSStatus},
+};
+
+use crate::{cipher_suite::SSLCipherSuite, trust::SecTrustRef};
 
 pub enum SSLContext {}
 pub type SSLContextRef = *mut SSLContext;
@@ -202,10 +203,8 @@ extern "C" {
         ciphers: *mut SSLCipherSuite,
         numCiphers: *mut usize,
     ) -> OSStatus;
-    pub fn SSLGetNumberSupportedCiphers(
-        context: SSLContextRef,
-        numCiphers: *mut usize,
-    ) -> OSStatus;
+    pub fn SSLGetNumberSupportedCiphers(context: SSLContextRef, numCiphers: *mut usize)
+        -> OSStatus;
     pub fn SSLGetEnabledCiphers(
         context: SSLContextRef,
         ciphers: *mut SSLCipherSuite,

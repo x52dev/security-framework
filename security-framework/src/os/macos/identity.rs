@@ -1,14 +1,13 @@
 //! OSX specific extensions to identity functionality.
-use core_foundation::array::CFArray;
-use core_foundation::base::TCFType;
-use security_framework_sys::identity::SecIdentityCreateWithCertificate;
 use std::ptr;
 
-use crate::base::Result;
-use crate::certificate::SecCertificate;
-use crate::cvt;
-use crate::identity::SecIdentity;
-use crate::os::macos::keychain::SecKeychain;
+use core_foundation::{array::CFArray, base::TCFType};
+use security_framework_sys::identity::SecIdentityCreateWithCertificate;
+
+use crate::{
+    base::Result, certificate::SecCertificate, cvt, identity::SecIdentity,
+    os::macos::keychain::SecKeychain,
+};
 
 /// An extension trait adding OSX specific functionality to `SecIdentity`.
 pub trait SecIdentityExt {
@@ -30,7 +29,11 @@ impl SecIdentityExt for SecIdentity {
         unsafe {
             let mut identity = ptr::null_mut();
             cvt(SecIdentityCreateWithCertificate(
-                if keychains.len() > 0 {keychains.as_CFTypeRef()} else {ptr::null()},
+                if keychains.len() > 0 {
+                    keychains.as_CFTypeRef()
+                } else {
+                    ptr::null()
+                },
                 certificate.as_concrete_TypeRef(),
                 &mut identity,
             ))?;
@@ -44,12 +47,14 @@ mod test {
     use tempfile::tempdir;
 
     use super::*;
-    use crate::identity::SecIdentity;
-    use crate::os::macos::certificate::SecCertificateExt;
-    use crate::os::macos::import_export::ImportOptions;
-    use crate::os::macos::keychain::CreateOptions;
-    use crate::os::macos::test::identity;
-    use crate::test;
+    use crate::{
+        identity::SecIdentity,
+        os::macos::{
+            certificate::SecCertificateExt, import_export::ImportOptions, keychain::CreateOptions,
+            test::identity,
+        },
+        test,
+    };
 
     #[test]
     fn certificate() {

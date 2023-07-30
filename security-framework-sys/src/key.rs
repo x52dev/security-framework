@@ -1,9 +1,8 @@
-use core_foundation_sys::base::CFTypeID;
-use core_foundation_sys::data::CFDataRef;
-use core_foundation_sys::dictionary::CFDictionaryRef;
-use core_foundation_sys::error::CFErrorRef;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{
+    base::CFTypeID, data::CFDataRef, dictionary::CFDictionaryRef, error::CFErrorRef,
+};
 
 use crate::base::SecKeyRef;
 

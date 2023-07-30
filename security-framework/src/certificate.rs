@@ -1,36 +1,42 @@
 //! Certificate support.
 
-use core_foundation::array::{CFArray, CFArrayRef};
-use core_foundation::base::{TCFType, ToVoid};
-use core_foundation::data::CFData;
-use core_foundation::dictionary::CFMutableDictionary;
-use core_foundation::string::CFString;
-use core_foundation_sys::base::kCFAllocatorDefault;
-#[cfg(target_os = "ios")]
-use security_framework_sys::base::{errSecNotTrusted, errSecSuccess};
-use security_framework_sys::base::{errSecParam, SecCertificateRef};
-use security_framework_sys::certificate::*;
-use security_framework_sys::keychain_item::SecItemDelete;
-use std::fmt;
-use std::ptr;
-
-use crate::base::{Error, Result};
-use crate::cvt;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use crate::key;
-#[cfg(target_os = "macos")]
-use crate::os::macos::keychain::SecKeychain;
+use std::ops::Deref;
+use std::{fmt, ptr};
+
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::base::FromVoid;
 #[cfg(any(feature = "OSX_10_13", target_os = "ios"))]
 use core_foundation::error::{CFError, CFErrorRef};
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::number::CFNumber;
+use core_foundation::{
+    array::{CFArray, CFArrayRef},
+    base::{TCFType, ToVoid},
+    data::CFData,
+    dictionary::CFMutableDictionary,
+    string::CFString,
+};
+use core_foundation_sys::base::kCFAllocatorDefault;
 #[cfg(feature = "serial-number-bigint")]
 use num_bigint::BigUint;
-use security_framework_sys::item::kSecValueRef;
+#[cfg(target_os = "ios")]
+use security_framework_sys::base::{errSecNotTrusted, errSecSuccess};
+use security_framework_sys::{
+    base::{errSecParam, SecCertificateRef},
+    certificate::*,
+    item::kSecValueRef,
+    keychain_item::SecItemDelete,
+};
+
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use std::ops::Deref;
+use crate::key;
+#[cfg(target_os = "macos")]
+use crate::os::macos::keychain::SecKeychain;
+use crate::{
+    base::{Error, Result},
+    cvt,
+};
 
 declare_TCFType! {
     /// A type representing a certificate.
@@ -75,7 +81,7 @@ impl SecCertificate {
     }
 
     /// Adds a certificate to a keychain.
-    #[cfg(target_os="macos")]
+    #[cfg(target_os = "macos")]
     pub fn add_to_keychain(&self, keychain: Option<SecKeychain>) -> Result<()> {
         let kch = match keychain {
             Some(kch) => kch,
@@ -163,8 +169,7 @@ impl SecCertificate {
     #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
     #[must_use]
     fn pk_to_der(&self, public_key: key::SecKey) -> Option<Vec<u8>> {
-        use security_framework_sys::item::kSecAttrKeyType;
-        use security_framework_sys::item::kSecAttrKeySizeInBits;
+        use security_framework_sys::item::{kSecAttrKeySizeInBits, kSecAttrKeyType};
 
         let public_key_attributes = public_key.attributes();
         let public_key_type = public_key_attributes
@@ -187,9 +192,9 @@ impl SecCertificate {
     #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
     /// Get public key from certificate
     pub fn public_key(&self) -> Result<key::SecKey> {
-        use crate::policy::SecPolicy;
-        use crate::trust::SecTrust;
         use std::slice::from_ref;
+
+        use crate::{policy::SecPolicy, trust::SecTrust};
 
         let policy = SecPolicy::create_x509();
         let mut trust = SecTrust::create_with_certificates(from_ref(self), from_ref(&policy))?;
@@ -217,8 +222,7 @@ impl SecCertificate {
 
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 fn get_asn1_header_bytes(pkt: CFString, ksz: u32) -> Option<&'static [u8]> {
-    use security_framework_sys::item::kSecAttrKeyTypeRSA;
-    use security_framework_sys::item::kSecAttrKeyTypeECSECPrimeRandom;
+    use security_framework_sys::item::{kSecAttrKeyTypeECSECPrimeRandom, kSecAttrKeyTypeRSA};
 
     if pkt == unsafe { CFString::wrap_under_get_rule(kSecAttrKeyTypeRSA) } && ksz == 2048 {
         return Some(&RSA_2048_ASN1_HEADER);
@@ -265,11 +269,12 @@ const EC_DSA_SECP_384_R1_ASN1_HEADER: [u8; 23] = [
 
 #[cfg(test)]
 mod test {
-    use crate::test::certificate;
     #[cfg(feature = "serial-number-bigint")]
     use num_bigint::BigUint;
     #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
     use x509_parser::prelude::*;
+
+    use crate::test::certificate;
 
     #[test]
     fn subject_summary() {

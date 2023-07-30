@@ -1,6 +1,6 @@
-use core_foundation_sys::base::OSStatus;
-use core_foundation_sys::string::CFStringRef;
 use std::os::raw::c_void;
+
+use core_foundation_sys::{base::OSStatus, string::CFStringRef};
 
 pub enum OpaqueSecKeychainRef {}
 pub type SecKeychainRef = *mut OpaqueSecKeychainRef;

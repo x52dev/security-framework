@@ -1,9 +1,9 @@
 //! Keychain item support.
 
-use core_foundation::base::TCFType;
-use security_framework_sys::base::SecKeychainItemRef;
-use security_framework_sys::keychain_item::SecKeychainItemGetTypeID;
 use std::fmt;
+
+use core_foundation::base::TCFType;
+use security_framework_sys::{base::SecKeychainItemRef, keychain_item::SecKeychainItemGetTypeID};
 
 declare_TCFType! {
     /// A type representing a keychain item.

@@ -1,11 +1,7 @@
 //! Encryption key support
 
-use crate::cvt;
-use core_foundation::{
-    base::TCFType, string::{CFStringRef, CFString},
-    dictionary::CFMutableDictionary,
-};
-use core_foundation::base::ToVoid;
+use std::fmt;
+
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::boolean::CFBoolean;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
@@ -13,44 +9,42 @@ use core_foundation::data::CFData;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::dictionary::CFDictionary;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use core_foundation::number::CFNumber;
-#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use core_foundation::error::{CFError, CFErrorRef};
-
-use security_framework_sys::{
-    item::{kSecAttrKeyTypeRSA, kSecValueRef}, 
-    keychain_item::SecItemDelete
-};
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use security_framework_sys::{item::{
-    kSecAttrIsPermanent, kSecAttrLabel, kSecAttrKeyType,
-    kSecAttrKeySizeInBits, kSecPrivateKeyAttrs
-}};
-#[cfg(target_os="macos")]
-use security_framework_sys::item::{
-    kSecAttrKeyType3DES, kSecAttrKeyTypeDSA, kSecAttrKeyTypeAES,
-    kSecAttrKeyTypeDES, kSecAttrKeyTypeRC4, kSecAttrKeyTypeCAST,
-};
-
-use security_framework_sys::key::SecKeyGetTypeID;
-use security_framework_sys::base::SecKeyRef;
-
-#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-pub use security_framework_sys::key::Algorithm;
-
-#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-use security_framework_sys::key::{
-    SecKeyCopyAttributes, SecKeyCopyExternalRepresentation,
-    SecKeyCreateSignature, SecKeyCreateRandomKey,
-    SecKeyCopyPublicKey,
+use core_foundation::number::CFNumber;
+use core_foundation::{
+    base::{TCFType, ToVoid},
+    dictionary::CFMutableDictionary,
+    string::{CFString, CFStringRef},
 };
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use security_framework_sys::item::kSecAttrApplicationLabel;
-use std::fmt;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::item::{
+    kSecAttrIsPermanent, kSecAttrKeySizeInBits, kSecAttrKeyType, kSecAttrLabel, kSecPrivateKeyAttrs,
+};
+#[cfg(target_os = "macos")]
+use security_framework_sys::item::{
+    kSecAttrKeyType3DES, kSecAttrKeyTypeAES, kSecAttrKeyTypeCAST, kSecAttrKeyTypeDES,
+    kSecAttrKeyTypeDSA, kSecAttrKeyTypeRC4,
+};
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+pub use security_framework_sys::key::Algorithm;
+#[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
+use security_framework_sys::key::{
+    SecKeyCopyAttributes, SecKeyCopyExternalRepresentation, SecKeyCopyPublicKey,
+    SecKeyCreateRandomKey, SecKeyCreateSignature,
+};
+use security_framework_sys::{
+    base::SecKeyRef,
+    item::{kSecAttrKeyTypeRSA, kSecValueRef},
+    key::SecKeyGetTypeID,
+    keychain_item::SecItemDelete,
+};
 
-use crate::base::Error;
 #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
 use crate::item::Location;
+use crate::{base::Error, cvt};
 
 /// Types of `SecKey`s.
 #[derive(Debug, Copy, Clone)]
@@ -136,7 +130,8 @@ impl SecKey {
     /// `CFDictionary`.
     pub fn generate(attributes: CFDictionary) -> Result<Self, CFError> {
         let mut error: CFErrorRef = ::std::ptr::null_mut();
-        let sec_key = unsafe { SecKeyCreateRandomKey(attributes.as_concrete_TypeRef(), &mut error)};
+        let sec_key =
+            unsafe { SecKeyCreateRandomKey(attributes.as_concrete_TypeRef(), &mut error) };
         if !error.is_null() {
             Err(unsafe { CFError::wrap_under_create_rule(error) })
         } else {
@@ -212,7 +207,12 @@ impl SecKey {
     /// Verifies the cryptographic signature for a block of data using a public
     /// key and specified algorithm.
     #[cfg(any(feature = "OSX_10_12", target_os = "ios"))]
-    pub fn verify_signature(&self, algorithm: Algorithm, signed_data: &[u8], signature: &[u8]) -> Result<bool, CFError> {
+    pub fn verify_signature(
+        &self,
+        algorithm: Algorithm,
+        signed_data: &[u8],
+        signature: &[u8],
+    ) -> Result<bool, CFError> {
         use security_framework_sys::key::SecKeyVerifySignature;
         let mut error: CFErrorRef = std::ptr::null_mut();
 
@@ -366,7 +366,7 @@ impl GenerateKeyOptions {
         }
 
         match self.token.as_ref().unwrap_or(&Token::Software) {
-            Token::Software => {},
+            Token::Software => {}
             Token::SecureEnclave => {
                 attribute_key_values.push((
                     unsafe { kSecAttrTokenID }.to_void(),

@@ -1,7 +1,8 @@
-use core_foundation_sys::base::CFOptionFlags;
-use core_foundation_sys::base::{CFAllocatorRef, CFTypeID, CFTypeRef};
-use core_foundation_sys::error::CFErrorRef;
-use core_foundation_sys::string::CFStringRef;
+use core_foundation_sys::{
+    base::{CFAllocatorRef, CFOptionFlags, CFTypeID, CFTypeRef},
+    error::CFErrorRef,
+    string::CFStringRef,
+};
 
 use crate::base::SecAccessControlRef;
 

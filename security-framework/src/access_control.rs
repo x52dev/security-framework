@@ -2,9 +2,12 @@
 
 use std::ptr::{self, null};
 
-use core_foundation::base::{TCFType, CFOptionFlags, kCFAllocatorDefault};
-use security_framework_sys::access_control::{SecAccessControlGetTypeID, SecAccessControlCreateWithFlags};
-use security_framework_sys::base::{SecAccessControlRef, errSecParam};
+use core_foundation::base::{kCFAllocatorDefault, CFOptionFlags, TCFType};
+use security_framework_sys::{
+    access_control::{SecAccessControlCreateWithFlags, SecAccessControlGetTypeID},
+    base::{errSecParam, SecAccessControlRef},
+};
+
 use crate::base::{Error, Result};
 
 declare_TCFType! {

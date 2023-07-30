@@ -1,15 +1,15 @@
 //! Digest Transform support
 
-use core_foundation::base::{CFIndex, TCFType};
-use core_foundation::data::CFData;
-use core_foundation::error::CFError;
-use core_foundation::string::CFString;
-use core_foundation_sys::base::CFTypeRef;
-use core_foundation_sys::data::CFDataRef;
-use core_foundation_sys::string::CFStringRef;
-use security_framework_sys::digest_transform::*;
-use security_framework_sys::transform::*;
 use std::ptr;
+
+use core_foundation::{
+    base::{CFIndex, TCFType},
+    data::CFData,
+    error::CFError,
+    string::CFString,
+};
+use core_foundation_sys::{base::CFTypeRef, data::CFDataRef, string::CFStringRef};
+use security_framework_sys::{digest_transform::*, transform::*};
 
 use crate::os::macos::transform::SecTransform;
 
@@ -162,9 +162,10 @@ impl Builder {
 
 #[cfg(test)]
 mod test {
-    use super::*;
     use core_foundation::data::CFData;
     use hex;
+
+    use super::*;
 
     #[test]
     fn md5() {
