@@ -150,6 +150,7 @@ impl SslConnectionType {
 pub enum HandshakeError<S> {
     /// The handshake failed.
     Failure(Error),
+
     /// The handshake was interrupted midway through.
     Interrupted(MidHandshakeSslStream<S>),
 }
@@ -166,6 +167,7 @@ impl<S> From<Error> for HandshakeError<S> {
 pub enum ClientHandshakeError<S> {
     /// The handshake failed.
     Failure(Error),
+
     /// The handshake was interrupted midway through.
     Interrupted(MidHandshakeClientBuilder<S>),
 }

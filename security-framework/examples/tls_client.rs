@@ -1,17 +1,17 @@
 use std::{
-    io::{Read, Write},
+    io::{Read as _, Write as _},
     net::TcpStream,
 };
 
 use security_framework::secure_transport::ClientBuilder;
 
 fn main() {
-    let stream = TcpStream::connect("google.com:443").unwrap();
+    let stream = TcpStream::connect("example.com:443").unwrap();
     let mut stream = ClientBuilder::new()
-        .handshake("google.com", stream)
+        .handshake("example.com", stream)
         .unwrap();
     println!(
-        "negotiated chipher: {:?}",
+        "negotiated cipher: {:?}",
         stream.context().negotiated_cipher().unwrap()
     );
     println!(
@@ -19,8 +19,11 @@ fn main() {
         stream.context().negotiated_protocol_version().unwrap()
     );
 
-    stream.write_all(b"GET / HTTP/1.0\r\n\r\n").unwrap();
+    stream
+        .write_all(b"GET / HTTP/1.1\r\nhost: example.com\r\nconnection: close\r\n\r\n")
+        .unwrap();
     stream.flush().unwrap();
+
     let mut buf = vec![];
     stream.read_to_end(&mut buf).unwrap();
     println!("{}", String::from_utf8_lossy(&buf));

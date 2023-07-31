@@ -2,12 +2,12 @@
 
 use security_framework_sys::cipher_suite::*;
 
+/// TLS cipher suites.
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+pub struct CipherSuite(SSLCipherSuite);
+
 macro_rules! make_suites {
     ($($suite:ident),+) => {
-        /// TLS cipher suites.
-        #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
-        pub struct CipherSuite(SSLCipherSuite);
-
         #[allow(missing_docs)]
         impl CipherSuite {
             $(
