@@ -1,11 +1,15 @@
 [package]
-name = "security-framework-sys"
+name = "apple-security-framework-sys"
 version = "2.9.1"
-authors = ["Steven Fackler <sfackler@gmail.com>", "Kornel <kornel@geekhood.net>"]
+authors = [
+    "Steven Fackler <sfackler@gmail.com>",
+    "Kornel <kornel@geekhood.net>",
+    "Rob Ede <robjtede@icloud.com>",
+]
 description = "Apple `Security.framework` low-level FFI bindings"
 categories = ["os::macos-apis", "external-ffi-bindings"]
 keywords = ["ffi", "iOS", "TLS", "SSL", "crypto"]
-repository = "https://github.com/kornelski/rust-security-framework"
+repository = "https://github.com/x52dev/apple-security-framework"
 license = "MIT OR Apache-2.0"
 edition = "2021"
 rust-version = "1.60"

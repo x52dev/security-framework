@@ -9,6 +9,9 @@
 //! XCode project (part of this crate) for how it gets
 //! linked and used for testing.
 
+extern crate apple_security_framework as security_framework;
+extern crate apple_security_framework_sys as security_framework_sys;
+
 use security_framework::passwords::{
     delete_generic_password, delete_internet_password, get_generic_password, get_internet_password,
     set_generic_password, set_internet_password,

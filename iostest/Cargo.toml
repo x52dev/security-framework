@@ -10,8 +10,8 @@ crate-type = ["staticlib"]
 
 [dependencies]
 core-foundation = "0.9.3"
-security-framework = { path = "../security-framework" }
-security-framework-sys = { path = "../security-framework-sys" }
+apple-security-framework = { path = "../security-framework" }
+apple-security-framework-sys = { path = "../security-framework-sys" }
 
 [dev-dependencies]
 rand = "0.8"

@@ -4,7 +4,7 @@ use std::{
     net::TcpStream,
 };
 
-use security_framework::{certificate::SecCertificate, secure_transport::ClientBuilder};
+use apple_security_framework::{certificate::SecCertificate, secure_transport::ClientBuilder};
 
 fn main() {
     let cert_path = env::args().next().unwrap();

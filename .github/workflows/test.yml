@@ -64,7 +64,7 @@ jobs:
           target: aarch64-apple-ios
 
       - name: Run check
-        run: cargo check -p=security-framework --target=aarch64-apple-ios --all-features
+        run: cargo check -p=apple-security-framework --target=aarch64-apple-ios --all-features
 
   apple-silicon:
     name: Check Apple Silicon
@@ -77,5 +77,6 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1.5.0
         with:
           target: aarch64-apple-darwin
+
       - name: Run check
-        run: cargo check -p=security-framework --target=aarch64-apple-darwin --all-features
+        run: cargo check -p=apple-security-framework --target=aarch64-apple-darwin --all-features

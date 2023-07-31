@@ -1,4 +1,4 @@
-use security_framework::random::SecRandom;
+use apple_security_framework::random::SecRandom;
 
 fn main() {
     let mut buf = [0; 32];
