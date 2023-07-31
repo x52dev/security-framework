@@ -1,9 +1,11 @@
 //! Cipher Suites supported by Secure Transport
 
+use std::fmt;
+
 use security_framework_sys::cipher_suite::*;
 
 /// TLS cipher suites.
-#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
+#[derive(Copy, Clone, Hash, PartialEq, Eq)]
 pub struct CipherSuite(SSLCipherSuite);
 
 macro_rules! make_suites {
@@ -25,7 +27,23 @@ macro_rules! make_suites {
             pub fn to_raw(&self) -> SSLCipherSuite {
                 self.0
             }
+
+            pub(crate) fn cipher_name(&self) -> &'static str {
+                #[allow(unreachable_patterns)] // there's some overlap in the constant values
+                match () {
+                    $(_ if self == &Self::$suite => stringify!($suite)),+,
+                    _ => "UNKNOWN"
+                }
+            }
         }
+    }
+}
+
+impl fmt::Debug for CipherSuite {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("CipherSuite")
+            .field(&format_args!("{:?} = {}", &self.0, self.cipher_name()))
+            .finish()
     }
 }
 
