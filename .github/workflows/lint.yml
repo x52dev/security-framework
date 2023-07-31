@@ -48,7 +48,7 @@ jobs:
           components: clippy
 
       - name: Clippy Check
-        uses: giraffate/clippy-action@v1.0.0
+        uses: giraffate/clippy-action@v1.0.1
         with:
           reporter: github-pr-check
           github_token: ${{ secrets.GITHUB_TOKEN }}
