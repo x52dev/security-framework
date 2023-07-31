@@ -398,7 +398,7 @@ impl SslClientCertificateState {
 }
 
 /// Specifies protocol versions.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Copy, Clone, PartialEq, Eq)]
 pub struct SslProtocol(SSLProtocol);
 
 impl SslProtocol {
@@ -439,6 +439,33 @@ impl SslProtocol {
 
     /// All supported TLS/SSL versions are accepted.
     pub const ALL: Self = Self(kSSLProtocolAll);
+}
+
+impl SslProtocol {
+    pub(crate) fn protocol_name(&self) -> &'static str {
+        match () {
+            _ if self.0 == kSSLProtocol3 => "SSL3",
+            _ if self.0 == kTLSProtocol1 => "TLS1",
+            _ if self.0 == kTLSProtocol11 => "TLS11",
+            _ if self.0 == kTLSProtocol12 => "TLS12",
+            _ if self.0 == kTLSProtocol13 => "TLS13",
+            _ if self.0 == kSSLProtocol2 => "SSL2",
+            _ if self.0 == kDTLSProtocol1 => "DTLS1",
+            _ if self.0 == kSSLProtocol3Only => "SSL3_ONLY",
+            _ if self.0 == kTLSProtocol1Only => "TLS1_ONLY",
+            _ if self.0 == kSSLProtocolAll => "ALL",
+            _ if self.0 == kSSLProtocolUnknown => "UNKNOWN",
+            _ => "UNKNOWN",
+        }
+    }
+}
+
+impl fmt::Debug for SslProtocol {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("SslProtocol")
+            .field(&format_args!("{:?} = {}", self.0, self.protocol_name()))
+            .finish()
+    }
 }
 
 declare_TCFType! {
