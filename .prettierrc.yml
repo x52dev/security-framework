@@ -3,3 +3,6 @@ overrides:
     options:
       proseWrap: never
       printWidth: 9999
+  - files: '**/*.{yml,yaml}'
+    options:
+      singleQuote: true
