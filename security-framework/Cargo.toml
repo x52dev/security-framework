@@ -1,11 +1,15 @@
 [package]
-name = "security-framework"
+name = "apple-security-framework"
 version = "2.9.2"
-authors = ["Steven Fackler <sfackler@gmail.com>", "Kornel <kornel@geekhood.net>"]
+authors = [
+    "Steven Fackler <sfackler@gmail.com>",
+    "Kornel <kornel@geekhood.net>",
+    "Rob Ede <robjtede@icloud.com>",
+]
 description = "Apple `Security.framework` bindings for macOS and iOS"
 categories = ["os::macos-apis", "cryptography", "api-bindings"]
 keywords = ["iOS", "TLS", "SSL", "crypto", "keychain"]
-repository = "https://github.com/kornelski/rust-security-framework"
+repository = "https://github.com/x52dev/apple-security-framework"
 license = "MIT OR Apache-2.0"
 exclude = ["test/*"]
 edition = "2021"
