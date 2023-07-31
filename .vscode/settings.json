@@ -1,0 +1,30 @@
+{
+    "cSpell.words": [
+        "aarch",
+        "alpn",
+        "badssl",
+        "bitflags",
+        "certifi",
+        "cferror",
+        "cfref",
+        "cfstring",
+        "cfurl",
+        "cstring",
+        "dlsym",
+        "dtls",
+        "epipe",
+        "funcs",
+        "keychain",
+        "keychains",
+        "libc",
+        "libcurl",
+        "ocsp",
+        "osstatus",
+        "recieved",
+        "repr",
+        "scts",
+        "tempdir",
+        "tempfile",
+        "uninit"
+    ]
+}
