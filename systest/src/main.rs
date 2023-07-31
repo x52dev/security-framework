@@ -1,9 +1,11 @@
-#![allow(bad_style)]
-#![allow(unused)]
-#![allow(clippy::all)]
-#![allow(deprecated)]
-#![allow(deref_nullptr)]
-#![allow(invalid_value)] // mem::uninitialized has to stay
+#![allow(
+    bad_style,
+    unused,
+    clippy::all,
+    deprecated,
+    invalid_value, // mem::uninitialized has to stay
+    deref_nullptr,
+)]
 
 extern crate apple_security_framework_sys as security_framework_sys;
 
@@ -14,21 +16,10 @@ use core_foundation_sys::{
     string::CFStringRef,
 };
 #[cfg(target_os = "macos")]
-use security_framework_sys::access::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::certificate_oids::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::code_signing::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::digest_transform::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::encrypt_transform::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::keychain::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::keychain_item::*;
-#[cfg(target_os = "macos")]
-use security_framework_sys::transform::*;
+use security_framework_sys::{
+    access::*, certificate_oids::*, code_signing::*, digest_transform::*, encrypt_transform::*,
+    keychain::*, keychain_item::*, transform::*,
+};
 use security_framework_sys::{
     access_control::*, authorization::*, base::*, certificate::*, cipher_suite::*, identity::*,
     import_export::*, item::*, key::*, policy::*, random::*, secure_transport::*, trust::*,
