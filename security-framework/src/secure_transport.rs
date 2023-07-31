@@ -5,9 +5,8 @@
 //! To connect as a client to a server with a certificate trusted by the system:
 //!
 //! ```rust
-//! use std::io::prelude::*;
-//! use std::net::TcpStream;
-//! use security_framework::secure_transport::ClientBuilder;
+//! use std::{net::TcpStream, io::prelude::*};
+//! use apple_security_framework::secure_transport::ClientBuilder;
 //!
 //! let stream = TcpStream::connect("google.com:443").unwrap();
 //! let mut stream = ClientBuilder::new().handshake("google.com", stream).unwrap();
@@ -23,9 +22,8 @@
 //! `ClientBuilder`:
 //!
 //! ```rust,no_run
-//! use std::io::prelude::*;
-//! use std::net::TcpStream;
-//! use security_framework::secure_transport::ClientBuilder;
+//! use std::{net::TcpStream, io::prelude::*};
+//! use apple_security_framework::secure_transport::ClientBuilder;
 //!
 //! # let root_cert = unsafe { std::mem::zeroed() };
 //! let stream = TcpStream::connect("my_server.com:443").unwrap();
@@ -45,9 +43,8 @@
 //! To run a server:
 //!
 //! ```rust,no_run
-//! use std::net::TcpListener;
-//! use std::thread;
-//! use security_framework::secure_transport::{SslContext, SslProtocolSide, SslConnectionType};
+//! use std::{net::TcpListener, thread};
+//! use apple_security_framework::secure_transport::{SslContext, SslProtocolSide, SslConnectionType};
 //!
 //! // Create a TCP listener and start accepting on it.
 //! let mut listener = TcpListener::bind("0.0.0.0:443").unwrap();

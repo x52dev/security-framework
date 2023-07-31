@@ -10,6 +10,9 @@
 //! threads in the same process simultaneously can produce interference.
 //! So all the query tests have been conditioned to run serially.
 
+extern crate apple_security_framework as security_framework;
+extern crate apple_security_framework_sys as security_framework_sys;
+
 use core_foundation::{base::TCFType, string::CFString};
 #[cfg(target_os = "macos")]
 use security_framework::os::macos::keychain::SecKeychain;

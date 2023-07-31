@@ -5,6 +5,8 @@
 #![allow(deref_nullptr)]
 #![allow(invalid_value)] // mem::uninitialized has to stay
 
+extern crate apple_security_framework_sys as security_framework_sys;
+
 use std::os::raw::*;
 
 use core_foundation_sys::{
