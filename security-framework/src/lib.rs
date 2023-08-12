@@ -6,7 +6,7 @@
 
 #[macro_use]
 extern crate core_foundation;
-extern crate apple_security_framework_sys as security_framework_sys;
+extern crate security_framework_sys as security_framework_sys;
 
 use core_foundation_sys::base::OSStatus;
 use security_framework_sys::base::errSecSuccess;

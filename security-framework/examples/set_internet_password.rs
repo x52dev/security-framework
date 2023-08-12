@@ -1,5 +1,5 @@
 #[cfg(target_os = "macos")]
-use apple_security_framework::os::macos::{
+use security_framework::os::macos::{
     keychain::SecKeychain,
     passwords::{SecAuthenticationType, SecProtocolType},
 };

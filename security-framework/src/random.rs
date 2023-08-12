@@ -9,7 +9,7 @@ use security_framework_sys::random::{kSecRandomDefault, SecRandomCopyBytes, SecR
 /// # Examples
 ///
 /// ```
-/// let rng = apple_security_framework::random::SecRandom::default();
+/// let rng = security_framework::random::SecRandom::default();
 ///
 /// let mut buf = [0; 32];
 /// rng.copy_bytes(&mut buf).unwrap();

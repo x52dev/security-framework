@@ -6,3 +6,7 @@ members = [
     "iostest",
     "systest"
 ]
+
+[patch.crates-io]
+security-framework-sys.path = "security-framework-sys"
+security-framework.path = "security-framework"

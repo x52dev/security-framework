@@ -3,7 +3,7 @@ use std::{
     net::TcpStream,
 };
 
-use apple_security_framework::secure_transport::ClientBuilder;
+use security_framework::secure_transport::ClientBuilder;
 
 fn main() {
     let stream = TcpStream::connect("example.com:443").unwrap();
