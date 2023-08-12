@@ -1,5 +1,5 @@
 [package]
-name = "apple-security-framework"
+name = "security-framework"
 version = "2.9.2"
 authors = [
     "Steven Fackler <sfackler@gmail.com>",
@@ -9,7 +9,7 @@ authors = [
 description = "Apple `Security.framework` bindings for macOS and iOS"
 categories = ["os::macos-apis", "cryptography", "api-bindings"]
 keywords = ["iOS", "TLS", "SSL", "crypto", "keychain"]
-repository = "https://github.com/x52dev/apple-security-framework"
+repository = "https://github.com/x52dev/security-framework"
 license = "MIT OR Apache-2.0"
 exclude = ["test/*"]
 edition = "2021"
@@ -31,18 +31,18 @@ job-bless = []
 # deprecated, do not use
 serial-number-bigint = ["dep:num-bigint"]
 
-OSX_10_9 = ["apple-security-framework-sys/OSX_10_9"]
-OSX_10_10 = ["OSX_10_9", "apple-security-framework-sys/OSX_10_10"]
-OSX_10_11 = ["OSX_10_10", "apple-security-framework-sys/OSX_10_11"]
-OSX_10_12 = ["OSX_10_11", "apple-security-framework-sys/OSX_10_12"]
-OSX_10_13 = ["OSX_10_12", "apple-security-framework-sys/OSX_10_13", "alpn", "session-tickets", "serial-number-bigint"]
-OSX_10_14 = ["OSX_10_13", "apple-security-framework-sys/OSX_10_14"]
-OSX_10_15 = ["OSX_10_14", "apple-security-framework-sys/OSX_10_15"]
+OSX_10_9 = ["security-framework-sys/OSX_10_9"]
+OSX_10_10 = ["OSX_10_9", "security-framework-sys/OSX_10_10"]
+OSX_10_11 = ["OSX_10_10", "security-framework-sys/OSX_10_11"]
+OSX_10_12 = ["OSX_10_11", "security-framework-sys/OSX_10_12"]
+OSX_10_13 = ["OSX_10_12", "security-framework-sys/OSX_10_13", "alpn", "session-tickets", "serial-number-bigint"]
+OSX_10_14 = ["OSX_10_13", "security-framework-sys/OSX_10_14"]
+OSX_10_15 = ["OSX_10_14", "security-framework-sys/OSX_10_15"]
 
 nightly = [] # not used, doesn't do anything, only for back compat
 
 [dependencies]
-apple-security-framework-sys = { version = "2.9", default-features = false, path = "../security-framework-sys" }
+security-framework-sys = { version = "2.9", default-features = false, path = "../security-framework-sys" }
 core-foundation = "0.9.3"
 core-foundation-sys = "0.8.3"
 bitflags = "2"
