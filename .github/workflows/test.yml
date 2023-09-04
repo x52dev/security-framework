@@ -17,29 +17,29 @@ concurrency:
 
 jobs:
   test:
-    name: Test
-
     strategy:
       fail-fast: false
       matrix:
         rust:
-          - 1.60.0 # MSRV
-          - stable
-          - beta
+          - { name: msrv, version: 1.60.0 }
+          - { name: stable, version: stable }
+          - { name: beta, version: beta }
 
     runs-on: macos-latest
+
+    name: Test (${{ matrix.rust.name }})
 
     steps:
       - name: Checkout sources
         uses: actions/checkout@v3
 
-      - name: Install Rust (${{ matrix.rust }})
+      - name: Install Rust (${{ matrix.rust.name }})
         uses: actions-rust-lang/setup-rust-toolchain@v1.5.0
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: ${{ matrix.rust.version }}
 
       - name: MSRV workarounds
-        if: ${{ matrix.rust == '1.60.0' }}
+        if: ${{ matrix.rust.name == 'msrv' }}
         run: |
           cargo generate-lockfile
           cargo update -p=time --precise=0.3.17
