@@ -46,6 +46,7 @@ jobs:
           cargo update -p=is-terminal --precise=0.4.7
           cargo update -p=dashmap --precise=5.4.0
           cargo update -p=tempfile --precise=3.6.0
+          cargo update -p=memchr --precise=2.6.2
 
       - name: Run cargo test
         run: cargo test --workspace --all-features
