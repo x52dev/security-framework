@@ -39,7 +39,7 @@ jobs:
           toolchain: ${{ matrix.rust.version }}
 
       - name: MSRV workarounds
-        if: ${{ matrix.rust.name == 'msrv' }}
+        if: matrix.rust.name == 'msrv'
         run: |
           cargo generate-lockfile
           cargo update -p=time --precise=0.3.17
