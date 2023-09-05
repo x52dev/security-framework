@@ -39,16 +39,20 @@ jobs:
           toolchain: ${{ matrix.rust.version }}
 
       - name: MSRV workarounds
-        if: ${{ matrix.rust.name == 'msrv' }}
+        if: matrix.rust.name == 'msrv'
         run: |
           cargo generate-lockfile
           cargo update -p=time --precise=0.3.17
           cargo update -p=is-terminal --precise=0.4.7
           cargo update -p=dashmap --precise=5.4.0
           cargo update -p=tempfile --precise=3.6.0
+          cargo update -p=memchr --precise=2.6.2
 
       - name: Run cargo test
         run: cargo test --workspace --all-features
+
+      - name: Run systest
+        run: cargo run -p=systest
 
       - name: Check default features
         run: cargo check --workspace

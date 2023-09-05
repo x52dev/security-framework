@@ -1,7 +1,7 @@
 use std::env;
 
 fn main() {
-    let mut test = ctest::TestGenerator::new();
+    let mut test = ctest2::TestGenerator::new();
 
     #[cfg(feature = "OSX_10_9")]
     test.cfg("feature", Some("OSX_10_9"));
@@ -42,5 +42,6 @@ fn main() {
         .type_name(|name, _, _| name.to_string())
         .skip_signededness(|s| s.ends_with("Ref") || s.ends_with("Func"))
         .skip_fn(|s| s == "SecRandomCopyBytes") // varies between macOS versions
+        .skip_type(|s| s == "AuthorizationRights" || s == "AuthorizationEnvironment") // causes false padding errors(?)
         .generate("../security-framework-sys/src/lib.rs", "all.rs");
 }
